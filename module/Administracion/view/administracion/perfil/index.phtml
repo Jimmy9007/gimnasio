@@ -1,0 +1,389 @@
+<?php
+if ($sesionUsuario = $this->identity()) {
+    $idPerfil = $this->escapeHtml($sesionUsuario->pk_usuario_id);
+    $sexo = $this->escapeHtml($sesionUsuario->SEXO);
+    $fecha = $this->escapeHtml($sesionUsuario->FECHA_NAC_USU);
+    $dia = date("d", strtotime($fecha));
+    $mes = date("m", strtotime($fecha));
+    if ($mes == 1) {
+        $mesNombre = "Enero";
+    } elseif ($mes == 2) {
+        $mesNombre = "Febrero";
+    } elseif ($mes == 3) {
+        $mesNombre = "Marzo";
+    } elseif ($mes == 4) {
+        $mesNombre = "Abril";
+    } elseif ($mes == 5) {
+        $mesNombre = "Mayo";
+    } elseif ($mes == 6) {
+        $mesNombre = "Junio";
+    } elseif ($mes == 7) {
+        $mesNombre = "Julio";
+    } elseif ($mes == 8) {
+        $mesNombre = "Agosto";
+    } elseif ($mes == 9) {
+        $mesNombre = "Septiembre";
+    } elseif ($mes == 10) {
+        $mesNombre = "Octubre";
+    } elseif ($mes == 11) {
+        $mesNombre = "Noviembre";
+    } else {
+        $mesNombre = "Diciembre";
+    }
+    if ($sexo == "Masculino") {
+        $iconoSex = "fa fa-male";
+    } else {
+        $iconoSex = "fa fa-female";
+    }
+}
+$title = "Perfil";
+$this->headTitle($title);
+$this->headScript()->prependFile('/gimnasio/public/js/sistema/perfil.js')
+        ->prependFile('/gimnasio/public/js/bootstrap-progressbar.min.js')
+?>
+<!DOCTYPE html>
+<html lang="es">
+    <!-- page content -->
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3><i class="fa fa-user"></i></h3>
+            </div>
+
+            <div class="title_right">
+                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                    <div class="input-group">             
+                        <a href="<?php echo $this->url('administracion/default', array('controller' => 'perfil', 'action' => 'perfilesUsuarios')) ?>" class="btn btn-success"><i class="fa fa-search-plus"></i> Buscar Contactos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Perfil De Usuario <small>Reporte de Actividades</small></h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#">Settings 1</a>
+                                    </li>
+                                    <li><a href="#">Settings 2</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><a class="close-link"><i class="fa fa-close"></i></a>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div class="col-md-3 col-sm-3 col-xs-12 profile_left">
+                            <div class="profile_img">
+                                <div id="crop-avatar">
+                                    <!-- Current avatar -->
+                                    <div class="image view view-first">
+                                        <img class="img-responsive avatar-view" src="/gimnasio/public/img/profile/<?php
+                                        foreach ($this->usuario as $usuario) {
+                                            echo $usuario['usuarioOBJ']->getRutaFotoPerfil();
+                                        }
+                                        ?>" alt="Avatar">
+                                        <div class="mask">
+                                            <p>Foto de perfil</p>
+                                            <div class="tools tools-bottom">
+                                                <a href="#"><i class="fa fa-search-plus"data-target="#ampliarFoto"data-toggle="modal" title="Zoom"></i></a>
+                                                <a href="#"><i class="fa fa-pencil"onclick="addFoto(<?php echo $idPerfil; ?>)"title="Cambiar foto"></i></a>
+                                                <a href="#"><i class="fa fa-times"title="Eliminar foto"></i></a>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                            foreach ($this->usuario as $nombreUsuario) {
+                                echo '<h3>' . $nombreUsuario['usuarioOBJ']->getNOM_USU() . ' ' . $nombreUsuario['usuarioOBJ']->getAPELL_USU() . '</h3>';
+                            }
+                            ?>
+
+                            <ul class="list-unstyled user_data">
+                                <li><i class="fa fa-birthday-cake user-profile-icon"></i> <?php echo $dia . "/" . $mesNombre ?>
+                                    <?php
+                                    if (($dia >= 22 && $mes == 12) || ($dia <= 19 && $mes == 1)) {
+                                        echo '<img src="/gimnasio/public/img/signos/capricornio.png" width="15%" height="15%" title="Capricornio">';
+                                    } else if (($dia >= 20 && $mes == 1) || ($dia <= 18 && $mes == 2)) {
+                                        echo '<img src="/gimnasio/public/img/signos/acuario.png"width="15%" height="15%" title="Acuario">';
+                                    } else if (($dia >= 19 && $mes == 2) || ($dia <= 20 && $mes == 3)) {
+                                        echo '<img src="/gimnasio/public/img/signos/piscis.png"width="15%" height="15%" title="Piscis">';
+                                    } else if (($dia >= 21 && $mes == 3) || ($dia <= 19 && $mes == 4)) {
+                                        echo '<img src="/gimnasio/public/img/signos/aries.png"width="15%" height="15%" title="Aries">';
+                                    } else if (($dia >= 20 && $mes == 4) || ($dia <= 20 && $mes == 5)) {
+                                        echo '<img src="/gimnasio/public/img/signos/tauro.png"width="15%" height="15%" title="Tauro">';
+                                    } else if (($dia >= 21 && $mes == 5) || ($dia <= 20 && $mes == 6)) {
+                                        echo '<img src="/gimnasio/public/img/signos/geminis.png"width="15%" height="15%" title="geminis">';
+                                    } else if (($dia >= 21 && $mes == 6) || ($dia <= 22 && $mes == 7)) {
+                                        echo '<img src="/gimnasio/public/img/signos/cancer.png"width="15%" height="15%" title="Cancer">';
+                                    } else if (($dia >= 23 && $mes == 7) || ($dia <= 22 && $mes == 8)) {
+                                        echo '<img src="/gimnasio/public/img/signos/leo.png"width="15%" height="15%" title="Leo">';
+                                    } else if (($dia >= 23 && $mes == 8) || ($dia <= 22 && $mes == 9)) {
+                                        echo '<img src="/gimnasio/public/img/signos/virgo.png"width="15%" height="15%" title="Virgo">';
+                                    } else if (($dia >= 23 && $mes == 9) || ($dia <= 22 && $mes == 10)) {
+                                        echo '<img src="/gimnasio/public/img/signos/libra.png"width="15%" height="15%" title="Libra">';
+                                    } else if (($dia >= 23 && $mes == 10) || ($dia <= 21 && $mes == 11)) {
+                                        echo '<img src="/gimnasio/public/img/signos/escorpion.png"width="15%" height="15%" title="Escorpion">';
+                                    } else if (($dia >= 22 && $mes == 11) || ($dia <= 21 && $mes == 12)) {
+                                        echo '<img src="/gimnasio/public/img/signos/sagitario.png"width="15%" height="15%" title="Sagitario">';
+                                    }
+                                    ?>
+                                </li>
+
+                                <li>
+                                    <i class="fa fa-briefcase user-profile-icon"></i>
+                                    <?php
+                                    foreach ($this->usuario as $ocupacion) {
+                                        echo $ocupacion['usuarioOBJ']->getOcupacion();
+                                    }
+                                    ?>
+                                </li>
+                                <li>
+                                    <i class="<?php echo $iconoSex; ?>"></i>
+                                    <?php
+                                    foreach ($this->usuario as $sexo) {
+                                        echo $sexo['usuarioOBJ']->getSexo();
+                                    }
+                                    ?>
+                                </li>
+
+                                <li class="m-top-xs">
+                                    <i class="fa fa-external-link user-profile-icon"></i> 
+                                    <?php
+                                    foreach ($this->usuario as $correo) {
+                                        echo $correo['usuarioOBJ']->getCORREO_USU();
+                                    }
+                                    ?>
+                                </li>
+                            </ul>
+
+                            <button type="button" onclick="editPerfil(<?php echo $idPerfil; ?>)" class="btn btn-success"><i class="fa fa-pencil-square-o"></i> Editar Mi Perfil</button>
+                            <br />
+
+                        </div>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+
+
+
+                            <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                                <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                                    <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Mensajes</a>
+                                    </li>
+                                    <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Progresos</a>
+                                    </li>
+                                    <li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">Perfil</a>
+                                    </li>
+                                </ul>
+                                <div id="myTabContent" class="tab-content">
+                                    <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+
+                                        <!-- start recent activity -->
+                                        <ul class="messages">
+                                            <li>
+                                                <img src="/gimnasio/public/img/profile/perfilHombre.png" class="avatar" alt="Avatar">
+                                                <div class="message_date">
+                                                    <h3 class="date text-info">24</h3>
+                                                    <p class="month">May</p>
+                                                </div>
+                                                <div class="message_wrapper">
+                                                    <h4 class="heading">Desmond Davison</h4>
+                                                    <blockquote class="message">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</blockquote>
+                                                    <br />
+                                                    <p class="url">
+                                                        <span class="fs1 text-info" aria-hidden="true" data-icon=""></span>
+                                                        <a href="#"><i class="fa fa-paperclip"></i> User Acceptance Test.doc </a>
+                                                    </p>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <img src="/gimnasio/public/img/profile/perfilHombre.png" class="avatar" alt="Avatar">
+                                                <div class="message_date">
+                                                    <h3 class="date text-error">21</h3>
+                                                    <p class="month">May</p>
+                                                </div>
+                                                <div class="message_wrapper">
+                                                    <h4 class="heading">Brian Michaels</h4>
+                                                    <blockquote class="message">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</blockquote>
+                                                    <br />
+                                                    <p class="url">
+                                                        <span class="fs1" aria-hidden="true" data-icon=""></span>
+                                                        <a href="#" data-original-title="">Download</a>
+                                                    </p>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <img src="/gimnasio/public/img/profile/perfilHombre.png" class="avatar" alt="Avatar">
+                                                <div class="message_date">
+                                                    <h3 class="date text-info">24</h3>
+                                                    <p class="month">May</p>
+                                                </div>
+                                                <div class="message_wrapper">
+                                                    <h4 class="heading">Desmond Davison</h4>
+                                                    <blockquote class="message">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</blockquote>
+                                                    <br />
+                                                    <p class="url">
+                                                        <span class="fs1 text-info" aria-hidden="true" data-icon=""></span>
+                                                        <a href="#"><i class="fa fa-paperclip"></i> User Acceptance Test.doc </a>
+                                                    </p>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <img src="/gimnasio/public/img/profile/perfilHombre.png" class="avatar" alt="Avatar">
+                                                <div class="message_date">
+                                                    <h3 class="date text-error">21</h3>
+                                                    <p class="month">May</p>
+                                                </div>
+                                                <div class="message_wrapper">
+                                                    <h4 class="heading">Brian Michaels</h4>
+                                                    <blockquote class="message">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</blockquote>
+                                                    <br />
+                                                    <p class="url">
+                                                        <span class="fs1" aria-hidden="true" data-icon=""></span>
+                                                        <a href="#" data-original-title="">Download</a>
+                                                    </p>
+                                                </div>
+                                            </li>
+
+                                        </ul>
+                                        <!-- end recent activity -->
+
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+
+                                        <!-- start user projects -->
+                                        <table class="data table table-striped no-margin">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Project Name</th>
+                                                    <th>Client Company</th>
+                                                    <th class="hidden-phone">Hours Spent</th>
+                                                    <th>Contribution</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>New Company Takeover Review</td>
+                                                    <td>Deveint Inc</td>
+                                                    <td class="hidden-phone">18</td>
+                                                    <td class="vertical-align-mid">
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-success" data-transitiongoal="35"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>New Partner Contracts Consultanci</td>
+                                                    <td>Deveint Inc</td>
+                                                    <td class="hidden-phone">13</td>
+                                                    <td class="vertical-align-mid">
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-danger" data-transitiongoal="15"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>Partners and Inverstors report</td>
+                                                    <td>Deveint Inc</td>
+                                                    <td class="hidden-phone">30</td>
+                                                    <td class="vertical-align-mid">
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-success" data-transitiongoal="45"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>4</td>
+                                                    <td>New Company Takeover Review</td>
+                                                    <td>Deveint Inc</td>
+                                                    <td class="hidden-phone">28</td>
+                                                    <td class="vertical-align-mid">
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-success" data-transitiongoal="75"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <!-- end user projects -->
+
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
+                                        <p>Juan es veterinario y por su puesto su amor por los animales es lo que más se destaca él. Tiene 30 años y mide 1.80 aproximadamente. Le gusta el rock y en sus ratos libres se dedica a tocar la guitarra eléctrica con un grupo de amigos de la infancia. Posee un carácter fuerte y es un poco testarudo, aunque tiene un gran corazón. Es una persona en la que se puede sin suda confiar y si tuviera que pedir ayuda, no dudaría en acudir a él. Tiene una familia hermosa compuesta por su esposa y tres hijos que lo acompañan en todos sus proyectos y lo incentivan a seguir creciendo a nivel personal y profesional.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /page content -->
+
+    <!--modal Iditar Perfil-->
+    <div class="modal fade" id="modalFormulario" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="overflow-y: scroll">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Formulario</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 10px" class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="x_panel">
+                                    <div class="x_content" id="divContenido"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <b>POPGYM &copy Copyright <?php echo date('Y'); ?></b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Ampliar Foto-->
+    <div class="modal fade" id="ampliarFoto" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mi FOTO DE PERFIL</h4>
+                </div>
+                <div class="modal-body">
+                    <img src="/gimnasio/public/img/profile/<?php
+                    foreach ($this->usuario as $usuario) {
+                        echo $usuario['usuarioOBJ']->getRutaFotoPerfil();
+                    }
+                    ?>" height="100%" width="100%">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<?php
+$nombreUsuario = 'SESION NO INICIADA';
+$tipoUsuario = 'Usuario';
+if ($sesionUsuario = $this->identity()) {
+    $nombreUsuario = $this->escapeHtml($sesionUsuario->NOM_USU) . ' ' . $this->escapeHtml($sesionUsuario->APELL_USU);
+    $tipoUsuario = $this->escapeHtml($sesionUsuario->TIPO_USUARIO);
+    $sexo = $this->escapeHtml($sesionUsuario->SEXO);
+    if ($sexo == 'Masculino') {
+        $ao = 'o';
+    } else {
+        $ao = 'a';
+    }
+}
+?>
+<div class="col-md-3 left_col">
+    <div class="left_col scroll-view">
+
+        <div class="navbar nav_title" style="border: 0;">
+            <img src="/gimnasio/public/img/gimnasio.jpg" style="width: 60%" alt="Gimnasio"/>
+            <div class="ln_solid"></div>
+        </div>
+        <div class="profile"><!--img_2 -->
+            <div class="profile_pic">
+                <?php
+                if ($sexo == 'Masculino') {
+                    echo '<img src="/gimnasio/public/img/profile/perfilHombre.png" alt="" class="img-circle profile_img">';
+                } else {
+                    echo '<img src="/gimnasio/public/img/profile/perfilMujer.png" alt="" class="img-circle profile_img">';
+                }
+                ?>
+            </div>
+            <div class="profile_info">
+                <span>Bienvenid<?php echo $ao; ?>,</span>
+                <h2><?php echo $nombreUsuario; ?></h2>
+                <br>
+            </div>
+        </div>
+       
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+            <div class="menu_section">
+                <h3>Menu General</h3>
+                <ul class="nav side-menu">
+                    <li><a class="sub_menu" href="<?php echo $this->url('administracion/default', array('controller' => 'asistencia', 'action' => 'index')) ?>"><i class="fa fa-book"></i> Asistencia</a>
+                        <ul class="nav child_menu">
+                           
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="sidebar-footer hidden-small">
+            <a data-toggle="tooltip" data-placement="top" title="Configuracion">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="Pantalla Completa">
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="Bloquear">
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+            </a>
+            <a href="<?php echo $this->url('login/default', array('controller' => 'login', 'action' => 'cerrarSesion')) ?>" data-toggle="tooltip" data-placement="top" title="Salir">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+            </a>
+        </div>
+    </div>
+</div>
+              
+                    
+                    
+            
+           
+                   
+                    
+            

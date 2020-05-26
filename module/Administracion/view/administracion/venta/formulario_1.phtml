@@ -1,0 +1,76 @@
+<?php
+$form = $this->form;
+$form->prepare();
+$hiddenInfoRegistro = '';
+$action = $form->getAttribute('action');
+if ($action == 'add') {
+    $hiddenInfoRegistro = 'hidden';
+}
+echo $this->form()->openTag($form);
+?>
+<fieldset>
+    <div class="form-group">
+        <a class="btn btn-info" onclick="seleccionarProducto()"><span class="fa fa-search"></span> Buscar Producto</a>
+    </div>
+
+</fieldset>
+
+<div style="overflow: scroll">
+    <table id="tblVentas" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Nombre</th>               
+                <th>Cantidad</th>
+                <th>Precio U.</th>
+                <th>Monto</th>                                    
+                <th></th>                                    
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            foreach ($this->productos as $productos) {
+                echo '<tr>';
+                echo '<td>' . $productos['productoOBJ']->getNombreProducto() . " " . $productos['productoOBJ']->getDescripcion() . '</td>';
+                echo '<td>' . $productos['productoVentaOBJ']->getCantidadVenta() . '</td>';
+                echo '<td>' . $productos['productoOBJ']->getPrecioVenta() . '</td>';
+                echo '<td>' . $productos['productoVentaOBJ']->getMonto() . '</td>';
+                echo '<td>';
+                echo '<a href="#"return false;" title="Eliminar esta Venta"><i class="fa fa-close"></i></a>';
+                echo '</td>';
+                echo '</tr>';
+            }
+            ?>
+
+        </tbody>
+    </table>
+</div>
+<fieldset <?php echo $hiddenInfoRegistro; ?>>
+    <legend>Informacion de Registro</legend>
+    <div class="form-group">
+        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="pk_venta_id">ID: </label>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <?php echo $this->formRow($form->get('pk_venta_id')); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fechaVenta">Fecha Venta <span class="required">*</span></label>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <?php echo $this->formRow($form->get('fechaVenta')); ?>
+        </div>
+    </div>
+</fieldset>
+
+<div class="ln_solid"></div>
+<div class="form-group">
+    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+        <?php
+        if ($action != 'buscar') {
+            echo $this->formRow($form->get('btnCancelar'));
+        }
+        if ($action != 'detail' && $action != 'buscar') {
+            echo $this->formSubmit($form->get('btnEnviar'));
+        }
+        ?>
+    </div>
+</div>
+<?php echo $this->form()->closeTag(); ?>

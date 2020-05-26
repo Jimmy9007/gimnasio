@@ -1,0 +1,72 @@
+<div id="divTxtDetalle">
+    <table class="tblDetalles">
+        <?php
+        $usuario = $this->usuario;
+
+        $this->headLink()->prependStylesheet($this->basePath('/public/css/dataTables.bootstrap.min.css'))
+                ->prependStylesheet($this->basePath('/public/css/buttons.bootstrap.min.css'))
+                ->prependStylesheet($this->basePath('/public/css/responsive.bootstrap.min.css'))
+                ->prependStylesheet($this->basePath('/public/css/scroller.bootstrap.min.css'))
+                ->prependStylesheet($this->basePath('/public/css/green.css'));
+
+        $simbolo = "";
+        if ($usuario->getSEXO() == 'Masculino') {
+            $simbolo = 'fa fa-male';
+        } else {
+            $simbolo = 'fa fa-female';
+        }
+
+
+        echo
+        '<tr>' .
+        '<td class="detalleTitulo"><center>DATOS DEL USUARIO</center></td>' .
+        '<td class="detalleTitulo" style="text-align: right"> Estado: ' . $usuario->getESTADO() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">ID </td>' .
+        '<td>' . $usuario->getPk_usuario_id() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">IDENTIFICACION </td>' .
+        '<td>' . $usuario->getIDENTIFICACION() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">NOMBRE </td>' .
+        '<td>' . $usuario->getNOM_USU() . ' ' . $usuario->getAPELL_USU() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">NACIMIENTO </td>' .
+        '<td>' . $usuario->getFECHA_NAC_USU() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">OCUPACION</td>' .
+        '<td>' . $usuario->getOcupacion() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">CORREO </td>' .
+        '<td>' . $usuario->getCORREO_USU() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">TELEFONO </td>' .
+        '<td>' . $usuario->getTEL_USU() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">DIRECCION </td>' .
+        '<td>' . $usuario->getDIR_USU() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">OBJETIVOS </td>' .
+        '<td>' . $usuario->getOBJETIVOS() . '</td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">CONDICION FISICA </td>' .
+        '<td>' . $usuario->getcondicionFisica() . ' <span style="float: right"><b>SEXO:  </b><i class="' . $simbolo . '"></i>' . '</span></td>' .
+        '</tr>' .
+        '<tr>' .
+        '<td class="detalleLabel">TIPO DE USUARIO </td>' .
+        '<td>' . $usuario->getTIPO_USUARIO() . ' <span style="float: right"><b>LOGIN </b> ' . $usuario->getLOGIN() . '</span></td>' .
+        '</tr>'
+        ;
+        ?>
+    </table>
+</div>

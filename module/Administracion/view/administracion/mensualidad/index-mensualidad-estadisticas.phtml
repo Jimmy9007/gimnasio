@@ -1,0 +1,75 @@
+<?php
+$title = 'Estadisticas';
+$this->headTitle($title);
+$this->headScript()
+        ->prependFile('/gimnasio/public/js/highcharts.js')
+        ->prependFile('/gimnasio/public/js/modules/exporting.js');
+
+$scriptGraficoReporte = "
+         $(function () {
+     $('#graficoBarras').highcharts({
+        chart: {
+            type: 'column'
+        },
+       title: {
+            text: 'MENSUALIDADES',
+            x: -20 //center
+        },
+        subtitle: {
+            text: 'POPGYM',
+            x: -20
+        },
+        xAxis: {
+            type: 'category',
+            labels: {
+                rotation: -45,
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Pesos ($)'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: 'Pesos $: <b>{point.y:.1f} mensuales</b>'
+        },
+        series: [{
+            name: 'Population',
+            data: [
+                ";
+
+foreach ($this->reporteMensualidad as $reporte) {
+    $scriptGraficoReporte .= "[" . $reporte['mes'] . "," . $reporte['reporteOBJ']->getValorReporte() . "],";
+}
+$scriptGraficoReporte .= "
+            ],
+            dataLabels: {
+                enabled: true,
+                rotation: -90,
+                color: '#FFFFFF',
+                align: 'right',
+                format: '{point.y:.1f}', // one decimal
+                y: 10, // 10 pixels down from the top
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        }]
+    });
+});
+        ";
+$this->headScript()->appendScript($scriptGraficoReporte);
+?>
+
+<div id="graficoBarras" style="min-width: 300px; height: 400px; margin: 0 auto"></div>
+
+

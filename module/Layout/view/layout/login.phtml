@@ -1,0 +1,41 @@
+<?php
+if (defined('RUNNING_FROM_ROOT')) {
+    $this->plugin('basePath')->setBasePath($this->basePath() . '/public');
+}
+echo $this->doctype();
+?>
+<html lang="es">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Meta, title, CSS, favicons, etc. -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>POPGYM :: Inicio de Sesion</title>
+
+        <!-- Bootstrap -->
+        <link href="/gimnasio/public/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link href="/gimnasio/public/css/font-awesome.min.css" rel="stylesheet">
+
+        <!-- Custom Theme Style -->
+        <link href="/gimnasio/public/css/custom.css" rel="stylesheet">
+    </head>
+
+    <body style="background: url(<?php echo $this->basePath('img/logoGym.jpg') ?>) center center no-repeat fixed; background-size: cover">
+        <div class="">
+            <a class="hiddenanchor" id="toregister"></a>
+            <a class="hiddenanchor" id="tologin"></a>
+
+            <div id="wrapper">
+                <div id="divLogin" class="form">
+                    <section class="login_content">
+                        <?php echo $this->content; ?>
+                    </section>
+                </div>
+
+            </div>
+        </div>
+    </body>
+</html>
