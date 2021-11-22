@@ -35,8 +35,6 @@ class EjerciciosController extends AbstractActionController {
         }
         $form = new EjerciciosForm($action, $onsubmit, $required);
         if ($action == 'edit') {
-//            $form->get('PASSWORD')->setAttribute('readonly', true);
-//            $form->get('PASSWORD')->setAttribute('required', false);
         }
         if ($idEjercicios != 0) {
             $ejerciciosOBJ = $this->getEjerciciosDAO()->getEjercicios($idEjercicios);

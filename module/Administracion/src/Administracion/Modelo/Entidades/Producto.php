@@ -17,7 +17,7 @@ class Producto implements InputFilterAwareInterface {
     private $fechaadquisicion;
     private $proveedor;
     private $numfactura;
-    private $imagen;
+    private $imagenProducto;
     private $estado;
     private $fechahorareg;
     private $fechahoramod;
@@ -91,8 +91,8 @@ class Producto implements InputFilterAwareInterface {
         return $this->numfactura;
     }
 
-    function getImagen() {
-        return $this->imagen;
+    function getImagenProducto() {
+        return $this->imagenProducto;
     }
 
     function getEstado() {
@@ -147,8 +147,8 @@ class Producto implements InputFilterAwareInterface {
         $this->numfactura = $numfactura;
     }
 
-    function setImagen($imagen) {
-        $this->imagen = $imagen;
+    function setImagenProducto($imagenProducto) {
+        $this->imagenProducto = $imagenProducto;
     }
 
     function setEstado($estado) {
@@ -162,5 +162,7 @@ class Producto implements InputFilterAwareInterface {
     function setFechahoramod($fechahoramod) {
         $this->fechahoramod = $fechahoramod;
     }
+
+
 
 }

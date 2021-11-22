@@ -1,17 +1,34 @@
+<style>
+    /*aca va el estilo de detalle*/
+
+    .tblDetalles{
+        background: #DDD;
+        margin: 0 auto;
+        width: 90%;
+    }
+
+    .tblDetalles td {
+        padding: 0px 10px;
+        border-bottom: 1px solid #FFF;
+    }
+
+    .detalleLabel {
+        font-weight: bold;
+        width: 30%;
+    }
+
+    .detalleTitulo {
+        font-weight: bold;
+        background: #333;
+        color: #EEE;
+        letter-spacing: 2px;
+        height: 30px;
+    }
+</style>
 <div id="divTxtDetalle">
     <table class="tblDetalles">
         <?php
         $ejercicio = $this->ejercicio;
-
-        $this->headLink()->prependStylesheet($this->basePath('/public/css/dataTables.bootstrap.min.css'))
-                ->prependStylesheet($this->basePath('/public/css/buttons.bootstrap.min.css'))
-                ->prependStylesheet($this->basePath('/public/css/responsive.bootstrap.min.css'))
-                ->prependStylesheet($this->basePath('/public/css/scroller.bootstrap.min.css'))
-                ->prependStylesheet($this->basePath('/public/css/green.css'));
-
-
-
-
         echo
         '<tr>' .
         '<td class="detalleTitulo"><center>DATOS DEL EJERCICIO</center></td>' .
@@ -31,7 +48,7 @@
         '</tr>' .
         '<tr>' .
         '<td class="detalleLabel">Imagen </td>' .
-       '<td> <img src="/gimnasio/public/img/ejercicios/' . $ejercicio->getRUTA_IMG_EJER() . '" width="250" height="250"></td>' .
+        '<td> <img src="/gimnasio/public/img/ejercicios/' . $ejercicio->getRUTA_IMG_EJER() . '" width="250" height="250"></td>' .
         '</tr>' .
         '<tr>'
         ;

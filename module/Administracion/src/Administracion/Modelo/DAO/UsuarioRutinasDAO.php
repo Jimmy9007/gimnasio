@@ -8,6 +8,7 @@ use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 use Administracion\Modelo\Entidades\UsuarioRutinas;
 use Administracion\Modelo\Entidades\Usuario;
+use Administracion\Modelo\Entidades\Clienteempleado;
 use Administracion\Modelo\Entidades\Rutinas;
 
 class UsuarioRutinasDAO extends AbstractTableGateway {
@@ -25,22 +26,27 @@ class UsuarioRutinasDAO extends AbstractTableGateway {
             'pk_rutina_id',
         ))->join('usuario', 'usuario_rutinas.pk_usuario_id = usuario.pk_usuario_id', array(
             'pk_usuario_id',
-            'NOM_USU',
-            'APELL_USU',
-            'SEXO',
-            'FECHA_NAC_USU',
+            'fk_clienteempleado_id',
+            'nombreApellido',
+            'genero',
         ))->join('rutinas', 'usuario_rutinas.pk_rutina_id = rutinas.pk_rutina_id', array(
             'pk_rutina_id',
             'DESCRIP_RUTINA',
             'fechaRutina',
-            'fk_instructor_id',
             'fk_usuario_id',
+        ));
+        $select->join('clienteempleado', 'clienteempleado.pk_clienteempleado_id = usuario.fk_clienteempleado_id', array(
+            'pk_clienteempleado_id',
+            'identificacion',
+            'nombre',
+            'apellido',
         ));
         $datos = $this->selectWith($select)->toArray();
         foreach ($datos as $dato) {
             $ejerciciosRutina[] = array(
                 'usuarioRutinasOBJ' => new UsuarioRutinas($dato),
                 'usuarioOBJ' => new Usuario($dato),
+                'clienteempleadoOBJ' => new Clienteempleado($dato),
                 'rutinasOBJ' => new Rutinas($dato),
             );
         }
@@ -70,7 +76,7 @@ class UsuarioRutinasDAO extends AbstractTableGateway {
         $idRutina = $_REQUEST["idRutinaSelect"];
         return $this->insert(array(
                     'pk_usuario_id' => $idUsuario,
-                    'pk_rutina_id' => $idRutina,                    
+                    'pk_rutina_id' => $idRutina,
         ));
     }
 
@@ -103,7 +109,6 @@ class UsuarioRutinasDAO extends AbstractTableGateway {
             'pk_rutina_id',
             'DESCRIP_RUTINA',
             'fechaRutina',
-            'fk_instructor_id',
             'fk_usuario_id',
         ))->where(array('pk_usuario_id' => $filtro));
         if ($filtro != '') {
@@ -113,7 +118,7 @@ class UsuarioRutinasDAO extends AbstractTableGateway {
         $datos = $this->selectWith($select)->toArray();
         foreach ($datos as $dato) {
             $rutinaUsuario = array(
-                'usuarioOBJ' => new Usuario($dato),               
+                'usuarioOBJ' => new Usuario($dato),
                 'rutinasOBJ' => new Rutinas($dato),
                 'usuarioRutinasOBJ' => new UsuarioRutinas($dato),
             );

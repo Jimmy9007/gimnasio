@@ -52,8 +52,7 @@ class AsistenciaController extends AbstractActionController {
         }
         $form = new AsistenciaForm($action, $onsubmit, $required);
         if ($action == 'edit') {
-//            $form->get('PASSWORD')->setAttribute('readonly', true);
-//            $form->get('PASSWORD')->setAttribute('required', false);
+            
         }
         if ($idAsistencia != 0) {
             $asistenciaOBJ = $this->getAsistenciaDAO()->getAsistencia($idAsistencia);
@@ -69,6 +68,23 @@ class AsistenciaController extends AbstractActionController {
         return new ViewModel(array(
             'asistencias' => $this->getAsistenciaDAO()->getAsistencias()
         ));
+    }
+
+    public function mensajeAction() {
+        $listaUsuario = array();
+        $idUsuario = (int) $this->params()->fromQuery('idUsuario', 0);
+        $consulta = $this->getMensualidadDAO()->getMensualidadeUsuario($idUsuario);
+        foreach ($consulta as $usuario) {
+            $nombres = $usuario['usuarioOBJ']->getNombreApellido();
+            $diasFaltantes = $usuario['diasPreaviso'];
+        }
+        if ($diasFaltantes >= 4) {
+            $this->flashMessenger()->addSuccessMessage('(' . $diasFaltantes . ') DIAS FALTANTES');
+        } elseif ($diasFaltantes <= 3 && $diasFaltantes >= 0) {
+            $this->flashMessenger()->addWarningMessage('(' . $diasFaltantes . ') DIAS FALTANTES');
+        } elseif ($diasFaltantes < 0) {
+            $this->flashMessenger()->addErrorMessage('MENSUALIDAD VENCIDA: (' . $diasFaltantes . ')');
+        }
     }
 
     public function addAction() {

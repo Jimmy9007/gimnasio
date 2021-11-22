@@ -19,6 +19,7 @@ class IndexController extends AbstractActionController {
 
     private $eventoDAO;
     private $usuarioDAO;
+    private $clienteempleadoDAO;
 
     public function getEventoDAO() {
         if (!$this->eventoDAO) {
@@ -34,6 +35,14 @@ class IndexController extends AbstractActionController {
             $this->usuarioDAO = $sm->get('Administracion\Modelo\DAO\UsuarioDAO');
         }
         return $this->usuarioDAO;
+    }
+
+    public function getClienteempleadoDAO() {
+        if (!$this->clienteempleadoDAO) {
+            $sm = $this->getServiceLocator();
+            $this->clienteempleadoDAO = $sm->get('Administracion\Modelo\DAO\ClienteempleadoDAO');
+        }
+        return $this->clienteempleadoDAO;
     }
 
     function getFormulario($action = '', $onsubmit = '', $idEvento = 0) {
@@ -54,7 +63,7 @@ class IndexController extends AbstractActionController {
     public function indexAction() {
         return new ViewModel(array(
             'evento' => $this->getEventoDAO()->getEventos(),
-            'usuarioCumple' => $this->getUsuarioDAO()->getUsuarios(),
+            'usuarioCumple' => $this->getClienteempleadoDAO()->getClienteempleados(),
             'usuariosTotal' => $this->getUsuarioDAO()->getCountUsuarios(),
             'MujeresTotal' => $this->getUsuarioDAO()->getCountMujeres(),
             'HombresTotal' => $this->getUsuarioDAO()->getCountHombres()
@@ -129,6 +138,25 @@ class IndexController extends AbstractActionController {
             $response->setContent(Json::encode(array('eliminado' => $resultado)));
         }
         return $response;
+    }
+
+    public function moverEventoAction() {
+        $idEvento = (int) $this->params()->fromQuery('id', 0);
+        $fStart = $this->params()->fromQuery('fStart', '');
+        $fEnd = $this->params()->fromQuery('fEnd', '');
+        $titulo = $this->params()->fromQuery('titulo', '');
+        $des = $this->params()->fromQuery('des', '');
+        $cColor = $this->params()->fromQuery('cColor', '');
+        $tColor = $this->params()->fromQuery('tColor', '');
+        $eventoOBJ = new Evento();
+        $eventoOBJ->setPk_evento_id($idEvento);
+        $eventoOBJ->setStart($fStart);
+        $eventoOBJ->setEnd($fEnd);
+        $eventoOBJ->setTitle($titulo);
+        $eventoOBJ->setDescripcion($des);
+        $eventoOBJ->setColor($cColor);
+        $eventoOBJ->setTextColor($tColor);
+        $this->getEventoDAO()->moverEvento($eventoOBJ);
     }
 
 }

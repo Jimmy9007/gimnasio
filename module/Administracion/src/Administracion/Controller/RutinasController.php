@@ -23,7 +23,6 @@ class RutinasController extends AbstractActionController {
     private $rutinasDAO;
     private $ejerciciosDAO;
     private $usuarioDAO;
-    private $instructorDAO;
     private $usuarioRutinasDAO;
 
     public function getRutinasDAO() {
@@ -49,20 +48,13 @@ class RutinasController extends AbstractActionController {
         }
         return $this->usuarioDAO;
     }
+
     public function getUsuarioRutinasDAO() {
         if (!$this->usuarioRutinasDAO) {
             $sm = $this->getServiceLocator();
             $this->usuarioRutinasDAO = $sm->get('Administracion\Modelo\DAO\UsuarioRutinasDAO');
         }
         return $this->usuarioRutinasDAO;
-    }
-
-    public function getInstructorDAO() {
-        if (!$this->instructorDAO) {
-            $sm = $this->getServiceLocator();
-            $this->instructorDAO = $sm->get('Administracion\Modelo\DAO\InstructorDAO');
-        }
-        return $this->instructorDAO;
     }
 
     function getFormulario($action = '', $onsubmit = '', $idRutinas = 0) {
@@ -73,7 +65,7 @@ class RutinasController extends AbstractActionController {
         $usuarios = $this->getUsuarioDAO()->getUsuarios();
         $usuariosSelect = array();
         foreach ($usuarios as $usu) {
-            $usuariosSelect[$usu->getPk_usuario_id()] = $usu->getNOM_USU();
+            $usuariosSelect[$usu['usuarioOBJ']->getPk_usuario_id()] = $usu['usuarioOBJ']->getNombreApellido();
         }
         $form = new RutinasForm($action, $onsubmit, $required, $usuariosSelect);
         if ($idRutinas != 0) {
@@ -110,17 +102,6 @@ class RutinasController extends AbstractActionController {
         $form = $this->getFormulario($action, $onsubmit);
         $request = $this->getRequest();
         if ($request->isPost()) {
-
-            $usuarioUnicoMedidas = $this->getRutinasDAO()->getRutinass($sql);
-            $usuariosMedidas = $this->getRutinasDAO()->getRutinass();
-
-//            var_dump('Nombre de la persona seleccionada: ' . $usuarioUnicoMedidas[0]['medidasOBJ']->getNOM_USU());
-
-            foreach ($usuariosMedidas as $um) {
-
-                var_dump('Nombres Usuarios: ' . $um['usuarioOBJ']->getNOM_USU());
-            }
-
             $form->setData($request->getPost());
             if ($form->isValid()) {
                 $rutinasOBJ = new Rutinas($form->getData());

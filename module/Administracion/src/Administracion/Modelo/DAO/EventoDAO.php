@@ -71,5 +71,19 @@ class EventoDAO extends AbstractTableGateway {
         return $resultado;
     }
 
+    public function moverEvento(Evento $eventoOBJ = null) {
+        $idEvento = (int) $eventoOBJ->getPk_evento_id();
+        if ($idEvento == 0) {
+            return $this->insert($eventoOBJ->getArrayCopy());
+        } else {
+            if ($this->existeID($idEvento)) {
+                return $this->update($eventoOBJ->getArrayCopy(), array('pk_evento_id' => $idEvento));
+            } else {
+                return 0;
+            }
+        }
+    }
+
 }
+
 ?>

@@ -29,3 +29,10 @@ function setEliminar(datos) {
 }
 
 //------------------------------------------------------------------------------
+function detalleProducto(idProducto) {
+    $.post('/gimnasio/administracion/producto/getDetalleProducto', {idProducto: idProducto}, setFormulario);
+}
+function setFormulario(datos) {
+    $("#divDetalle").html(datos);
+    $("#dlgDetalles").modal('show');
+}

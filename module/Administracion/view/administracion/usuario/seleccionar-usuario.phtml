@@ -6,8 +6,7 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>NOMBRES</th>
-                <th>APELLIDOS</th>
+                <th>NOMBRES</th>               
                 <th>IDENTIFICACION</th>
                 <th>TIPO USUARIO</th>
                 <th>ESTADO</th>
@@ -18,14 +17,13 @@
             <?php
             foreach ($this->usuarios as $usuario) {
                 echo '<tr>';
-                echo '<td>' . $usuario->getPk_usuario_id() . '</td>';
-                echo '<td>' . $usuario->getNOM_USU() . '</td>';
-                echo '<td>' . $usuario->getAPELL_USU() . '</td>';
-                echo '<td>' . $usuario->getIDENTIFICACION() . '</td>';
-                echo '<td>' . $usuario->getTIPO_USUARIO() . '</td>';
-                echo '<td>' . $usuario->getESTADO() . '</td>';
+                echo '<td>' . $usuario['usuarioOBJ']->getPk_usuario_id() . '</td>';
+                echo '<td>' . $usuario['usuarioOBJ']->getNombreApellido() . '</td>';
+                echo '<td>' . $usuario['clienteempleadoOBJ']->getIdentificacion() . '</td>';
+                echo '<td>' . $usuario['rolOBJ']->getRol() . '</td>';
+                echo '<td>' . $usuario['usuarioOBJ']->getESTADO() . '</td>';
                 echo '<td>';
-                echo '<a href="" onclick="selectUsuario(' . $usuario->getPk_usuario_id() . '); return false;" title="Seleccionar este Usuario"><i class="fa fa-check"></i></a>';
+                echo '<a href="" onclick="selectUsuario(' . $usuario['usuarioOBJ']->getPk_usuario_id() . '); return false;" title="Seleccionar este Usuario"><i class="fa fa-check"></i></a>';
                 echo '</td>';
                 echo '</tr>';
             }

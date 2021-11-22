@@ -35,7 +35,7 @@ class ProductoController extends AbstractActionController {
         }
         $form = new ProductoForm($action, $onsubmit, $required);
         if ($action == 'add') {
-            $form->get('imagen')->setAttribute('type', 'file');
+            $form->get('imagenProducto')->setAttribute('type', 'file');
         }
         if ($idProducto != 0) {
             $productoOBJ = $this->getProductoDAO()->getProducto($idProducto);
@@ -64,17 +64,17 @@ class ProductoController extends AbstractActionController {
                 $httpadapter = new \Zend\File\Transfer\Adapter\Http();
                 $filesize = new \Zend\Validator\File\Size(array('max' => 5242880)); //  5 MB
                 $extension = new \Zend\Validator\File\Extension(array('extension' => array('gif', 'jpg', 'png', 'jpeg', 'bmp')));
-                $httpadapter->setValidators(array($filesize, $extension), $files['imagen']['name']);
+                $httpadapter->setValidators(array($filesize, $extension), $files['imagenProducto']['name']);
                 if ($httpadapter->isValid()) {
                     $httpadapter->setDestination($this->rutaArchivos);
-                    $ext = pathinfo($files['imagen']['name'], PATHINFO_EXTENSION);
-                    $archivo = strtoupper(md5(rand() . $files['imagen']['name'])) . '.' . $ext;
+                    $ext = pathinfo($files['imagenProducto']['name'], PATHINFO_EXTENSION);
+                    $archivo = strtoupper(md5(rand() . $files['imagenProducto']['name'])) . '.' . $ext;
                     $httpadapter->addFilter('File\Rename', array(
                         'target' => $this->rutaArchivos . '/' . $archivo,
                     ));
-                    if ($httpadapter->receive($files['imagen']['name'])) {
+                    if ($httpadapter->receive($files['imagenProducto']['name'])) {
                         $productoOBJ = new Producto($form->getData());
-                        $productoOBJ->setImagen($archivo);
+                        $productoOBJ->setImagenProducto($archivo);
                         if ($this->getProductoDAO()->guardar($productoOBJ) == 0) {
                             unlink($this->rutaArchivos . '/' . $archivo);
                         }
@@ -92,7 +92,7 @@ class ProductoController extends AbstractActionController {
                         $form->setData($request->getPost());
                         if ($form->isValid()) {
                             $productoOBJ = new Producto($form->getData());
-                            $productoOBJ->setImagen('sin_foto.png');
+                            $productoOBJ->setImagenProducto('sin_foto.png');
 
                             $this->getProductoDAO()->guardar($productoOBJ);
                             return $this->redirect()->toRoute('administracion/default', array(
@@ -177,6 +177,15 @@ class ProductoController extends AbstractActionController {
         return $view;
     }
 
+    public function getDetalleProductoAction() {
+        $idProducto = (int) $this->params()->fromPost('idProducto', 0);
+        $view = new ViewModel(array(
+            'producto' => $this->getProductoDAO()->getDetalleProducto($idProducto)
+        ));
+        $view->setTerminal(true);
+        return $view;
+    }
+
     public function deleteAction() {
         $request = $this->getRequest();
         $response = $this->getResponse();
@@ -197,6 +206,15 @@ class ProductoController extends AbstractActionController {
         $view->setTerminal(true);
         return $view;
     }
+    public function seleccionarProductoEditarAction() {
+        $idVenta = (int) $this->params()->fromQuery('idVenta', 0);
+        $filtro = "producto.pk_producto_id NOT IN (SELECT venta_producto.pk_producto_id FROM venta_producto WHERE venta_producto.pk_venta_id = $idVenta)";
+        $view = new ViewModel(array(
+            'productos' => $this->getProductoDAO()->getProductos($filtro),
+        ));
+        $view->setTerminal(true);
+        return $view;
+    }
 
     public function getProductoAction() {
         $idProducto = (int) $this->params()->fromQuery('idProducto', 0);
@@ -209,6 +227,20 @@ class ProductoController extends AbstractActionController {
             'producto' => $this->getProductoDAO()->getProducto($idProducto)
         ));
         $view->setTemplate('administracion/producto/formulario');
+        $view->setTerminal(true);
+        return $view;
+    }
+    public function getProductoEditarAction() {
+        $idProducto = (int) $this->params()->fromQuery('idProducto', 0);
+        if (!$idProducto) {
+            return 0;
+        }
+        $form = $this->getFormulario('buscar', '', $idProducto);
+        $view = new ViewModel(array(
+            'form' => $form,
+            'producto' => $this->getProductoDAO()->getProducto($idProducto)
+        ));
+        $view->setTemplate('administracion/producto/editarventa');
         $view->setTerminal(true);
         return $view;
     }

@@ -1,14 +1,14 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
 <?php
 if ($sesionUsuario = $this->identity()) {
-    $nombreUsuario = $this->escapeHtml($sesionUsuario->NOM_USU) . ' ' . $this->escapeHtml($sesionUsuario->APELL_USU);
+    $nombreUsuario = $this->escapeHtml($sesionUsuario->nombreApellido);
 }
 $usuario = $this->usuario;
 $title = 'Medias de ' . $nombreUsuario;
 $this->headTitle($title);
-$this->headScript()
-        ->prependFile('/gimnasio/public/js/highcharts.js')
-        ->prependFile('/gimnasio/public/js/modules/exporting.js');
-
 
 $scriptGraficoMedidas = "
            $(function () {
@@ -132,37 +132,20 @@ $scriptGraficoMedidas .= "]
         ";
 $this->headScript()->appendScript($scriptGraficoMedidas);
 ?>
-<!-- /.row -->
 <div class="row">
-    <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Medidas De:<?php echo $nombreUsuario; ?>
-                <div class="pull-right">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                            Acciones
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu pull-right" role="menu">
-                            <li><a href="#">IMG</a>
-                            </li>
-                            <li><a href="#">IGC</a>
-                            </li>
-                            <li><a href="#">%GC</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li><a href="#">Progresos</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><i class="fa fa-bar-chart-o fa-fw"></i> Medidas De:<small><?php echo $nombreUsuario; ?></small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>                  
+                </ul>
+                <div class="clearfix"></div>
             </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div id="graficoBarras" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            <div class="x_content">
+                <div id="graficoBarras"></div>
             </div>
-            <!-- /.panel-body -->
         </div>
     </div>
 </div>

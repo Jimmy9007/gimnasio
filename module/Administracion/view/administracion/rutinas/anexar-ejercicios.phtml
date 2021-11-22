@@ -1,11 +1,12 @@
 <?php
 $title = 'Rutinas ';
 $this->headTitle($title);
-$this->headLink()->prependStylesheet($this->basePath('/public/css/dataTables.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/buttons.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/responsive.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/scroller.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/green.css'));
+$this->headLink()->prependStylesheet($this->basePath('vendors/datatables.net-bs/css/dataTables.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/iCheck/skins/flat/green.css'));
 
 $this->headScript()->prependScript('$(document).ready(function() {'
                 . '$("#tblRutinass").DataTable({'
@@ -34,15 +35,21 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                 . '});'
                 , 'text/javascript'
                 , array('noescape' => true))
-        ->prependFile($this->basePath('/public/js/sistema/rutinas.js'))
-        ->prependFile($this->basePath('/public/js/datatables.scroller.min.js'))
-        ->prependFile($this->basePath('/public/js/responsive.bootstrap.js'))
-        ->prependFile($this->basePath('/public/js/dataTables.responsive.min.js'))
-        ->prependFile($this->basePath('/public/js/buttons.bootstrap.min.js'))
-        ->prependFile($this->basePath('/public/js/dataTables.buttons.min.js'))
-        ->prependFile($this->basePath('/public/js/dataTables.bootstrap.min.js'))
-        ->prependFile($this->basePath('/public/js/icheck.min.js'))
-        ->prependFile($this->basePath('/public/js/jquery.dataTables.min.js'));
+        ->prependFile($this->basePath('js/sistema/rutinas.js'))
+        ->prependFile('/gimnasio/public/vendors/iCheck/icheck.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-scroller/js/dataTables.scroller.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-responsive/js/dataTables.responsive.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-buttons/js/dataTables.buttons.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-buttons/js/buttons.html5.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-buttons/js/buttons.print.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js')
+        ->prependFile('/gimnasio/public/vendors/pdfmake/build/pdfmake.min.js')
+        ->prependFile('/gimnasio/public/vendors/pdfmake/build/vfs_fonts.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net/js/jquery.dataTables.min.js');
 $formRutinas = $this->form;
 ?>
 <div class="page-title">
@@ -70,8 +77,8 @@ $formRutinas = $this->form;
                 $tipoUsuario = '';
                 $hiddenCliente = '';
                 if ($sesionUsuario = $this->identity()) {
-                    $tipoUsuario = $this->escapeHtml($sesionUsuario->TIPO_USUARIO);
-                    if ($tipoUsuario == 'Cliente') {
+                    $tipoUsuario = $this->escapeHtml($sesionUsuario->fk_rol_id);
+                    if ($tipoUsuario == '2') {
                         $hiddenCliente = 'hidden';
                     } else {
                         $hiddenCliente = '';

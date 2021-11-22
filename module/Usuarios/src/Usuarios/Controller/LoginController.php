@@ -53,10 +53,10 @@ class LoginController extends AbstractActionController {
 
                 switch ($result->getCode()) {
                     case Result::FAILURE_IDENTITY_NOT_FOUND:
-                        echo 'error_1';
+                        $this->flashMessenger()->addErrorMessage("USUARIO O CONTRASEÑA INCORRECTO");
                         break;
                     case Result::FAILURE_CREDENTIAL_INVALID:
-                        echo 'error_2';
+                        $this->flashMessenger()->addErrorMessage("USUARIO O CONTRASEÑA INCORRECTO");
                         break;
                     case Result::SUCCESS:
                         $storage = $auth->getStorage();
@@ -69,19 +69,24 @@ class LoginController extends AbstractActionController {
                         }
                         $tipoUsuario = '';
                         if ($sesionUsuario = $this->identity()) {
-                            $tipoUsuario = $sesionUsuario->TIPO_USUARIO;
+                            $tipoUsuario = $sesionUsuario->fk_rol_id;
                         }
-                        if ($tipoUsuario == 'Administrador') {
+                        if ($tipoUsuario == '1') {
                             $viewModel = $this->redirect()->toRoute('administracion/default', array(
                                 'controller' => 'index',
                                 'action' => 'index',
                             ));
-                        } else  if ($tipoUsuario == 'Cliente'){
+                        } else if ($tipoUsuario == '2') {
                             $viewModel = $this->redirect()->toRoute('administracion/default', array(
                                 'controller' => 'index',
                                 'action' => 'index',
                             ));
-                        } else  if ($tipoUsuario == 'Asistencia'){
+                        } else if ($tipoUsuario == '3') {
+                            $viewModel = $this->redirect()->toRoute('administracion/default', array(
+                                'controller' => 'index',
+                                'action' => 'index',
+                            ));
+                        } else if ($tipoUsuario == '4') {
                             $viewModel = $this->redirect()->toRoute('administracion/default', array(
                                 'controller' => 'index',
                                 'action' => 'index',
@@ -89,7 +94,7 @@ class LoginController extends AbstractActionController {
                         }
                         break;
                     default:
-                        // do stuff for other failure
+                        $this->flashMessenger()->addErrorMessage("SE HA PRESENTADO UN INCONVENIENTE CON EL INICIO DE SU SESION");
                         break;
                 }
                 foreach ($result->getMessages() as $message) {
@@ -113,6 +118,7 @@ class LoginController extends AbstractActionController {
 //		$auth->getStorage()->session->getManager()->forgetMe(); // no way to get the sessionmanager from storage
         $sessionManager = new \Zend\Session\SessionManager();
         $sessionManager->forgetMe();
+        $this->flashMessenger()->addSuccessMessage("LA SESION HA TERMINADO");
 
         return $this->redirect()->toRoute('login/default', array('controller' => 'login', 'action' => 'login'));
     }

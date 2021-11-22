@@ -11,7 +11,7 @@ if ($action == 'add') {
 echo $this->form()->openTag($form);
 ?>
 <fieldset>
-    <legend>Informacion del instructor</legend>
+    <legend>Informacion del producto</legend>
     <div class="form-group">
         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nombreProducto">Nombres <span class="required">*</span></label>
         <div class="col-md-6 col-sm-6 col-xs-12">
@@ -75,8 +75,7 @@ echo $this->form()->openTag($form);
     <div class="form-group">
         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="imagen">Imagen<span class="required">*</span></label>
         <div class="col-md-6 col-sm-6 col-xs-12">
-            <?php echo $this->formRow($form->get('imagen')); ?> 
-            <a href="#" title="VER FOTO" data-target="#ampliarFoto"data-toggle="modal"> <i class="fa fa-photo"> </i> </a>
+            <?php echo $this->formRow($form->get('imagenProducto')); ?> 
         </div>
     </div>
 </fieldset>
@@ -116,25 +115,3 @@ echo $this->form()->openTag($form);
     </div>
 </div>
 <?php echo $this->form()->closeTag(); ?>
-<!-- Modal Ampliar Foto-->
-<div class="modal fade" id="ampliarFoto" role="dialog">
-    <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">FOTO</h4>
-            </div>
-            <div class="modal-body">               
-                <img src="/gimnasio/public/img/productos/<?php
-                echo $producto->getImagen();
-                ?>" alt="..." class="img-circle profile_img">  
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-
-    </div>
-</div>

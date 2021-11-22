@@ -93,8 +93,8 @@ return array(
                     'route' => '/login',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Usuarios\Controller',
-                        'controller' => 'Login',
-                        'action' => 'login',
+                        'controller' => 'Inicio',
+                        'action' => 'inicio',
                     ),
                 ),
                 'may_terminate' => true,
@@ -120,6 +120,12 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Usuarios\Controller\Login' => Controller\LoginController::class,
+            'Usuarios\Controller\Inicio' => Controller\InicioController::class,
+            'Usuarios\Controller\Producto' => Controller\ProductoController::class,
+            'Usuarios\Controller\Productodetalle' => Controller\ProductodetalleController::class,
+            'Usuarios\Controller\Oferta' => Controller\OfertaController::class,
+            'Usuarios\Controller\Asistencia' => Controller\AsistenciaController::class,
+            'Usuarios\Controller\Contacto' => Controller\ContactoController::class,
         ),
     ),
     'view_manager' => array(

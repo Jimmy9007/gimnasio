@@ -1,0 +1,48 @@
+<?php
+$fI = $this->fechaI;
+$fF = $this->fechaF;
+?>
+<h1>Mensulidades</h1>
+<p>Reporte desde la fecha: <b><?php echo date("d/M/Y", strtotime($fI)); ?></b> hasta la fecha: <b><?php echo date("d/M/Y", strtotime($fF)); ?></b></p>
+<table id="tblReporte">
+    <thead>
+        <tr>
+            <td class="tdTitulo">id</td>
+            <td class="tdTitulo">NOMBRE</td>
+            <td class="tdTitulo">IDENTI.</td>
+            <td class="tdTitulo">F. Inicio</td>
+            <td class="tdTitulo">F. Fin</td>
+            <td class="tdTitulo">VALOR</td>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($this->mensualidades as $mensualidad) {
+            echo '<tr>';
+            echo '<td>' . $mensualidad['reporteOBJ']->getPk_reporte_id() . '</td>';
+            echo '<td>' . $mensualidad['usuarioOBJ']->getNombreApellido() . '</td>';
+            echo '<td>' . $mensualidad['clienteempleadoOBJ']->getIdentificacion() . '</td>';
+            echo '<td>' . date("d/M/Y", strtotime($mensualidad['reporteOBJ']->getFechaReporte())) . '</td>';
+            echo '<td>' . date("d/M/Y", strtotime($mensualidad['reporteOBJ']->getFechaFinReporte())) . '</td>';
+            echo '<td width="70" align="center">$ ' . number_format($mensualidad['reporteOBJ']->getValorReporte()) . '</td>';
+            echo '</tr>';
+        }
+        ?>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <?php
+            $total = 0;
+            foreach ($this->mensualidades as $suma) {
+                $total += $suma['mensualidadOBJ']->getValor();
+            }
+            echo '<td width="70" align="center" style="background-color:#FFFF00;color:#0000FF;"><b>$ ' . number_format($total) . '</b></td>';
+            ?>
+        </tr>
+    </tfoot>
+</table>

@@ -1,0 +1,43 @@
+<?php
+$fI = $this->fechaI;
+$fF = $this->fechaF;
+?>
+<h1>Entrenos</h1>
+<p>Reporte desde la fecha: <b><?php echo date("d/M/Y", strtotime($fI)); ?></b> hasta la fecha: <b><?php echo date("d/M/Y", strtotime($fF)); ?></b></p>
+<table id="tblReporte">
+    <thead>
+        <tr>
+            <td class="tdTitulo">ID</td>
+            <td class="tdTitulo">NOMBRE</td>
+            <td class="tdTitulo">Fecha</td>
+            <td class="tdTitulo">VALOR</td>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($this->entrenosPDF as $entreno) {
+            echo '<tr>';
+            echo '<td>' . $entreno->getPk_entreno_id() . '</td>';
+            echo '<td>' . $entreno->getNombreUsuario() . '</td>';
+            echo '<td>' . $entreno->getFechaHoraEntreno() . '</td>';
+            echo '<td width="140" align="center">$ ' . number_format($entreno->getValor()) . '</td>';
+            echo '</tr>';
+        }
+        ?>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td width="140" align="center"></td>
+            <td width="140" align="center"></td>
+            <td width="70" align="center"></td>
+            <?php
+            $total = 0;
+            foreach ($this->entrenosPDF as $suma) {
+                $total += $suma->getValor();
+            }
+            echo '<td width="140" align="center" style="background-color:#FFFF00;color:#0000FF;"><b>$ ' . number_format($total) . '</b></td>';
+            ?>
+        </tr>
+    </tfoot>
+</table>
+

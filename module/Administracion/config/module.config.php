@@ -13,27 +13,17 @@ namespace Administracion;
 return array(
     'router' => array(
         'routes' => array(
-            'inicio' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
-                    'route' => '/',
-                    'defaults' => array(
-                        'controller' => 'Administracion\Controller\Index',
-                        'action' => 'index',
-                    ),
-                ),
-            ),
             // The following is a route to simplify getting started creating
             // new controllers and actions without needing to create a new
             // module. Simply drop new controllers in, and you can access them
-            // using the path /pruebas/:controller/:action
+            // using the path /application/:controller/:action
             'administracion' => array(
                 'type' => 'Literal',
                 'options' => array(
                     'route' => '/administracion',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Administracion\Controller',
-                        'controller' => 'Index',
+                        'controller' => 'Administracion',
                         'action' => 'index',
                     ),
                 ),
@@ -42,7 +32,7 @@ return array(
                     'default' => array(
                         'type' => 'Segment',
                         'options' => array(
-                            'route' => '/[:controller[/:action][/:id1][/:id2]]',
+                            'route' => '/:controller/:action[/:id1][/:id2][/:id3]',
                             'constraints' => array(
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
@@ -78,25 +68,31 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'Administracion\Controller\Index' => Controller\IndexController::class,
-            'Administracion\Controller\Usuario' => Controller\UsuarioController::class,
-            'Administracion\Controller\Medidas' => Controller\MedidasController::class,
-            'Administracion\Controller\Mensualidad' => Controller\MensualidadController::class,
-            'Administracion\Controller\Instructor' => Controller\InstructorController::class,
-            'Administracion\Controller\Rutinas' => Controller\RutinasController::class,
-            'Administracion\Controller\UsuarioRutinas' => Controller\UsuarioRutinasController::class,
-            'Administracion\Controller\Asistencia' => Controller\AsistenciaController::class,
-            'Administracion\Controller\Ejercicios' => Controller\EjerciciosController::class,
-            'Administracion\Controller\Entreno' => Controller\EntrenoController::class,
-            'Administracion\Controller\Producto' => Controller\ProductoController::class,
-            'Administracion\Controller\Venta' => Controller\VentaController::class,
-            'Administracion\Controller\ProbaLluvia' => Controller\ProbaLluviaController::class,
-            'Administracion\Controller\Perfil' => Controller\PerfilController::class,
+            'Administracion\Controller\Index' => 'Administracion\Controller\IndexController',
+            'Administracion\Controller\Usuario' => 'Administracion\Controller\UsuarioController',
+            'Administracion\Controller\Medidas' => 'Administracion\Controller\MedidasController',
+            'Administracion\Controller\Mensualidad' => 'Administracion\Controller\MensualidadController',
+            'Administracion\Controller\Clienteempleado' => 'Administracion\Controller\ClienteempleadoController',
+            'Administracion\Controller\Rol' => 'Administracion\Controller\RolController',
+            'Administracion\Controller\Turno' => 'Administracion\Controller\TurnoController',
+            'Administracion\Controller\Rutinas' => 'Administracion\Controller\RutinasController',
+            'Administracion\Controller\UsuarioRutinas' => 'Administracion\Controller\UsuarioRutinasController',
+            'Administracion\Controller\Asistencia' => 'Administracion\Controller\AsistenciaController',
+            'Administracion\Controller\Ejercicios' => 'Administracion\Controller\EjerciciosController',
+            'Administracion\Controller\Entreno' => 'Administracion\Controller\EntrenoController',
+            'Administracion\Controller\Personalizado' => 'Administracion\Controller\PersonalizadoController',
+            'Administracion\Controller\Producto' => 'Administracion\Controller\ProductoController',
+            'Administracion\Controller\Venta' => 'Administracion\Controller\VentaController',
+            'Administracion\Controller\ProbaLluvia' => 'Administracion\Controller\ProbaLluviaController',
+            'Administracion\Controller\Perfil' => 'Administracion\Controller\PerfilController',
         ),
     ),
     'view_manager' => array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
+        ),
+        'strategies' => array(
+            'ViewJsonStrategy',
         ),
     ),
     // Placeholder for console routes

@@ -1,0 +1,50 @@
+<?php
+if (defined('RUNNING_FROM_ROOT')) {
+    $this->plugin('basePath')->setBasePath($this->basePath() . '/public');
+}
+echo $this->doctype();
+?>
+<!-- top navigation -->
+<div class="top_nav">
+    <div class="nav_menu">
+        <nav>
+            <div class="nav toggle">
+                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <img src="/gimnasio/public/img/gimnasio.jpg" alt="">
+                </a>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                    <a>
+                    </a>                                
+                </li>
+                <li> 
+                    <a href="<?php echo $this->url('login/default', array('controller' => 'login', 'action' => 'login')) ?>"><i class="fa fa-sign-in"></i></a>
+                </li>
+                <li class="">
+                    <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-bars"></i>                                    
+                    </a>
+                    <ul class="dropdown-menu dropdown-usermenu pull-right">
+                        <li>
+                            <a href="<?php echo $this->url('login/default', array('controller' => 'oferta', 'action' => 'oferta')) ?>"><i class="fa fa-money pull-right"></i> Planes</a>
+                        </li>
+                        <li>
+                            <a href="<?php echo $this->url('login/default', array('controller' => 'producto', 'action' => 'producto')) ?>"><i class="fa fa-shopping-cart pull-right"></i> Productos</a>
+                        </li>                                
+                        <li>
+                            <a href="<?php echo $this->url('login/default', array('controller' => 'contacto', 'action' => 'contacto')) ?>"><i class="fa fa-users pull-right"></i> Contactos</a>
+                        </li>                             
+                    </ul>
+                </li>                       
+                <li>
+                    <a href="<?php echo $this->url('login/default', array('controller' => 'inicio', 'action' => 'inicio')) ?>"><i class="fa fa-home"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<!-- /top navigation -->
+
+

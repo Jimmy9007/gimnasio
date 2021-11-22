@@ -7,7 +7,7 @@ use Zend\Form\Form;
 
 class UsuarioForm extends Form {
 
-    public function __construct($action = '', $onsubmit = '', $required = true) {
+    public function __construct($action = '', $onsubmit = '', $required = true, $listaClienteEmpleado = array(), $listaRoles = array()) {
         parent::__construct('formUsuario');
         $this->setAttribute('method', 'post');
         $this->setAttribute('data-toggle', 'validator');
@@ -28,9 +28,40 @@ class UsuarioForm extends Form {
                 'id' => 'pk_usuario_id',
             )
         ));
+        $this->add(array(
+            'name' => 'fk_clienteempleado_id',
+            'type' => 'Select',
+            'options' => array(
+                'empty_option' => 'Seleccione...',
+                'value_options' => $listaClienteEmpleado,
+                'disable_inarray_validator' => true,
+            ),
+            'attributes' => array(
+                'disabled' => FALSE,
+                'required' => TRUE,
+                'class' => 'form-control',
+                'onchange' => 'getLogin(this.value)',
+                'id' => 'fk_clienteempleado_id',
+            )
+        ));
+        $this->add(array(
+            'name' => 'fk_rol_id',
+            'type' => 'Select',
+            'options' => array(
+                'empty_option' => 'Seleccione...',
+                'value_options' => $listaRoles,
+                'disable_inarray_validator' => true,
+            ),
+            'attributes' => array(
+                'disabled' => FALSE,
+                'required' => TRUE,
+                'class' => 'form-control',
+                'id' => 'fk_rol_id',
+            )
+        ));
 
         $this->add(array(
-            'name' => 'NOM_USU',
+            'name' => 'nombreApellido',
             'attributes' => array(
                 'type' => 'text',
                 'class' => 'form-control has-feedback-left',
@@ -38,162 +69,56 @@ class UsuarioForm extends Form {
                 'style' => 'text-transform: uppercase',
                 'required' => $required,
                 'readonly' => !$required,
-                'id' => 'NOM_USU',
+                'id' => 'nombreApellido',
             )
         ));
         $this->add(array(
-            'name' => 'APELL_USU',
+            'name' => 'login',
             'attributes' => array(
                 'type' => 'text',
-                'class' => 'form-control has-feedback-left',
-                'maxlength' => 50,
-                'style' => 'text-transform: uppercase',
-                'required' => $required,
+                'class' => 'form-control',
                 'readonly' => !$required,
-                'id' => 'APELL_USU',
-            )
-        ));
-        $this->add(array(
-            'name' => 'IDENTIFICACION',
-            'attributes' => array(
-                'type' => 'text',
-                'class' => 'form-control col-md-7 col-xs-12',
-                'placeholder' => 'Solo Numeros',
-                'pattern' => '[0-9]{1,20}',
+                'required' => $required,
                 'maxlength' => 20,
-                'required' => $required,
-                'readonly' => !$required,
-                'id' => 'IDENTIFICACION',
+                'style' => 'text-transform:lowercase',
+                'onchange' => 'existeLogin(this.value)',
+                'id' => 'loginRegistro',
             )
         ));
         $this->add(array(
-            'name' => 'FECHA_NAC_USU',
-            'attributes' => array(
-                'type' => 'date',
-                'class' => 'form-control has-feedback-left',
-                'required' => $required,
-                'readonly' => !$required,
-                'id' => 'FECHA_NAC_USU',
-            )
-        ));
-        $this->add(array(
-            'name' => 'ocupacion',
-            'attributes' => array(
-                'type' => 'text',
-                'class' => 'form-control has-feedback-left',
-                'maxlength' => 50,
-                'style' => 'text-transform: uppercase',
-                'required' => $required,
-                'readonly' => !$required,
-                'id' => 'ocupacion',
-            )
-        ));
-        $this->add(array(
-            'name' => 'CORREO_USU',
-            'attributes' => array(
-                'type' => 'email',
-                'class' => 'form-control has-feedback-left',
-                'maxlenght' => 80,
-                'style' => 'text-transform: lowercase',
-                'required' => $required,
-                'readonly' => !$required,
-                'id' => 'CORREO_USU',
-            )
-        ));
-
-        $this->add(array(
-            'name' => 'TEL_USU',
-            'attributes' => array(
-                'type' => 'text',
-                'class' => 'form-control has-feedback-left',
-                'maxlenght' => 50,
-                'required' => $required,
-                'readonly' => !$required,
-                'id' => 'TEL_USU',
-            )
-        ));
-        $this->add(array(
-            'name' => 'DIR_USU',
-            'attributes' => array(
-                'type' => 'text',
-                'class' => 'form-control col-md-7 col-xs-12',
-                'maxlenght' => 50,
-                'required' => $required,
-                'readonly' => !$required,
-                'id' => 'DIR_USU',
-            )
-        ));
-        $this->add(array(
-            'name' => 'LOGIN',
+            'name' => 'password',
             'attributes' => array(
                 'type' => 'text',
                 'class' => 'form-control col-md-7 col-xs-12',
                 'maxlength' => 500,
                 'required' => $required,
                 'readonly' => !$required,
-                'id' => 'LOGIN',
+                'id' => 'password',
             )
         ));
         $this->add(array(
-            'name' => 'PASSWORD',
+            'name' => 'passwordseguro',
             'attributes' => array(
                 'type' => 'text',
                 'class' => 'form-control col-md-7 col-xs-12',
                 'maxlength' => 500,
+                'onblur' => 'verificarPassword()',
                 'required' => $required,
                 'readonly' => !$required,
-                'id' => 'PASSWORD',
+                'id' => 'passwordseguro',
             )
         ));
         $this->add(array(
-            'name' => 'PASSWORDSEGURO',
+            'name' => 'estado',
             'attributes' => array(
                 'type' => 'text',
-                'class' => 'form-control col-md-7 col-xs-12',
-                'maxlength' => 500,
-                'onchange' => 'confirmarPassword()',
-                'required' => $required,
-                'readonly' => !$required,
-                'id' => 'PASSWORDSEGURO',
-            )
-        ));
-
-        $this->add(array(
-            'name' => 'ESTADO',
-            'type' => 'Select',
-            'options' => array(
-                'empty_option' => 'Seleccione ...',
-                'value_options' => array(
-                    'Activo' => 'Activo',
-                    'Eliminado' => 'Eliminado',
-                ),
-                'disable_inarray_validator' => true,
-            ),
-            'attributes' => array(
                 'class' => 'form-control',
-                'required' => $required,
-                'id' => 'ESTADO',
+                'readonly' => true,
+                'id' => 'estado',
             )
         ));
         $this->add(array(
-            'name' => 'TIPO_USUARIO',
-            'type' => 'Select',
-            'options' => array(
-                'empty_option' => 'Seleccione ...',
-                'value_options' => array(
-                    'Administrador' => 'Administrador',
-                    'Cliente' => 'Cliente',
-                ),
-                'disable_inarray_validator' => true,
-            ),
-            'attributes' => array(
-                'class' => 'form-control',
-                'required' => $required,
-                'id' => 'TIPO_USUARIO',
-            )
-        ));
-        $this->add(array(
-            'name' => 'SEXO',
+            'name' => 'genero',
             'type' => 'Select',
             'options' => array(
                 'empty_option' => 'Seleccione ...',
@@ -206,45 +131,7 @@ class UsuarioForm extends Form {
             'attributes' => array(
                 'class' => 'form-control',
                 'required' => $required,
-                'id' => 'SEXO',
-            )
-        ));
-        $this->add(array(
-            'name' => 'condicionFisica',
-            'type' => 'Select',
-            'options' => array(
-                'empty_option' => 'Seleccione ...',
-                'value_options' => array(
-                    'Normal' => 'Normal',
-                    'Deportista' => 'Deportista',
-                    'Sedentaria' => 'Sedentaria',
-                ),
-                'disable_inarray_validator' => true,
-            ),
-            'attributes' => array(
-                'class' => 'form-control',
-                'required' => $required,
-                'id' => 'condicionFisica',
-            )
-        ));
-        $this->add(array(
-            'name' => 'OBJETIVOS',
-            'type' => 'Select',
-            'options' => array(
-                'empty_option' => 'Seleccione ...',
-                'value_options' => array(
-                    'Bajar de peso' => 'Bajar de peso',
-                    'Ganar masa muscular' => 'Ganar masa muscular',
-                    'Tonificar el musculo' => 'Tonificar el musculo',
-                    'Mejorar la condición fisica' => 'Mejorar la condición fisica',
-                    'Terapia' => 'Terapia',
-                ),
-                'disable_inarray_validator' => true,
-            ),
-            'attributes' => array(
-                'class' => 'form-control',
-                'required' => $required,
-                'id' => 'OBJETIVOS',
+                'id' => 'genero',
             )
         ));
         $this->add(array(
@@ -257,10 +144,6 @@ class UsuarioForm extends Form {
                 'id' => 'rutaFotoPerfil',
             )
         ));
-
-
-
-
 //------------------------------------------------------------------------------
 
         $this->add(array(
@@ -271,7 +154,7 @@ class UsuarioForm extends Form {
             ),
             'attributes' => array(
                 'value' => 'Cancelar',
-                'class' => 'btn btn-primary',
+                'class' => 'btn btn-warning',
                 'data-dismiss' => 'modal',
                 'id' => 'btnCancelar',
             ),

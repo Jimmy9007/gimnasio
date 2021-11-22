@@ -65,8 +65,7 @@ class MensualidadController extends AbstractActionController {
         }
         $form = new MensualidadForm($action, $onsubmit, $required);
         if ($action == 'edit') {
-//            $form->get('PASSWORD')->setAttribute('readonly', true);
-//            $form->get('PASSWORD')->setAttribute('required', false);
+            
         }
         if ($idMensualidad != 0) {
             $mensualidadOBJ = $this->getMensualidadDAO()->getMensualidad($idMensualidad);
@@ -81,6 +80,36 @@ class MensualidadController extends AbstractActionController {
 //        $filtro = "mensualidad.estado = 'Eliminado'";
         return new ViewModel(array(
             'mensualidades' => $this->getMensualidadDAO()->getMensualidades()
+        ));
+    }
+
+    public function barchartAction() {
+        $anio = (int) $this->params()->fromQuery('anio', 0);
+        return new ViewModel(array(
+            'enero' => $this->getMensualidadDAO()->getBarChartEnero($anio),
+            'febrero' => $this->getMensualidadDAO()->getBarChartFebrero($anio),
+            'marzo' => $this->getMensualidadDAO()->getBarChartMarzo($anio),
+            'abril' => $this->getMensualidadDAO()->getBarChartAbril($anio),
+            'mayo' => $this->getMensualidadDAO()->getBarChartMayo($anio),
+            'junio' => $this->getMensualidadDAO()->getBarChartJunio($anio),
+            'julio' => $this->getMensualidadDAO()->getBarChartJulio($anio),
+            'agosto' => $this->getMensualidadDAO()->getBarChartAgosto($anio),
+            'septiembre' => $this->getMensualidadDAO()->getBarChartSeptiembre($anio),
+            'octubre' => $this->getMensualidadDAO()->getBarChartOctubre($anio),
+            'noviembre' => $this->getMensualidadDAO()->getBarChartNoviembre($anio),
+            'diciembre' => $this->getMensualidadDAO()->getBarChartDiciembre($anio),
+            'eneroVenta' => $this->getVentaDAO()->getBarChartEnero($anio),
+            'febreroVenta' => $this->getVentaDAO()->getBarChartFebrero($anio),
+            'marzoVenta' => $this->getVentaDAO()->getBarChartMarzo($anio),
+            'abrilVenta' => $this->getVentaDAO()->getBarChartAbril($anio),
+            'mayoVenta' => $this->getVentaDAO()->getBarChartMayo($anio),
+            'junioVenta' => $this->getVentaDAO()->getBarChartJunio($anio),
+            'julioVenta' => $this->getVentaDAO()->getBarChartJulio($anio),
+            'agostoVenta' => $this->getVentaDAO()->getBarChartAgosto($anio),
+            'septiembreVenta' => $this->getVentaDAO()->getBarChartSeptiembre($anio),
+            'octubreVenta' => $this->getVentaDAO()->getBarChartOctubre($anio),
+            'noviembreVenta' => $this->getVentaDAO()->getBarChartNoviembre($anio),
+            'diciembreVenta' => $this->getVentaDAO()->getBarChartDiciembre($anio),
         ));
     }
 
@@ -103,7 +132,7 @@ class MensualidadController extends AbstractActionController {
             if ($reporte === 'Mensualidades') {
                 $objExcel = $objReader->load('module/Administracion/view/administracion/mensualidad/plantilla_reporte_mensualidad.xlsx');
 
-                $mensualidades = $this->getMensualidadDAO()->getReporteMensualidad($where = "DATE(reportemensualidad.fechaReporte) BETWEEN '" . $fechaI . "' AND '" . $fechaF . "' ");
+                $mensualidades = $this->getMensualidadDAO()->getReporteMensualidad($where = "DATE(reportemensualidad.fechaReporte) BETWEEN '" . $fechaI . "' AND '" . $fechaF . "' ORDER BY reportemensualidad.fechaReporte DESC");
 
                 $objExcel->setActiveSheetIndex(0);
                 $objActSheet = $objExcel->getActiveSheet();
@@ -115,9 +144,9 @@ class MensualidadController extends AbstractActionController {
                 $cont = 11;
                 $limBorder = 0;
                 foreach ($mensualidades as $mensualidad) {
-                    $objActSheet->setCellValue('A' . $cont, $mensualidad['reporteOBJ']->getFk_mensualidad_id());
-                    $objActSheet->setCellValue('B' . $cont, $mensualidad['usuarioOBJ']->getNOM_USU() . ' ' . $mensualidad['usuarioOBJ']->getAPELL_USU());
-                    $objActSheet->setCellValue('C' . $cont, $mensualidad['usuarioOBJ']->getIDENTIFICACION());
+                    $objActSheet->setCellValue('A' . $cont, $mensualidad['reporteOBJ']->getPk_reporte_id());
+                    $objActSheet->setCellValue('B' . $cont, $mensualidad['usuarioOBJ']->getNombreApellido());
+                    $objActSheet->setCellValue('C' . $cont, $mensualidad['clienteempleadoOBJ']->getIdentificacion());
                     $objActSheet->setCellValue('D' . $cont, $mensualidad['reporteOBJ']->getFechaReporte());
                     $objActSheet->setCellValue('E' . $cont, $mensualidad['reporteOBJ']->getFechaFinReporte());
                     $objActSheet->setCellValue('F' . $cont, $mensualidad['reporteOBJ']->getValorReporte());
@@ -132,7 +161,20 @@ class MensualidadController extends AbstractActionController {
 
                 $file_name = $fechaI . '_' . $fechaF . '-Mensualidades' . '-' . $hoy;
             }
+            if ($reporte === 'Mensualidades PDF') {
+                $mensualidades = $this->getMensualidadDAO()->getReporteMensualidad($where = "DATE(reportemensualidad.fechaReporte) BETWEEN '" . $fechaI . "' AND '" . $fechaF . "' ORDER BY reportemensualidad.fechaReporte DESC");
 
+                $plantilla = new ViewModel(array(
+                    'mensualidades' => $mensualidades,
+                    'fechaI' => $fechaI,
+                    'fechaF' => $fechaF,
+                ));
+                $plantilla->setTerminal(true);
+                $plantilla->setTemplate('administracion/mensualidad/reporteMensualidad');
+                $marcadores['reportePDF'] = $this->getServiceLocator()->get('viewrenderer')->render($plantilla);
+
+                $this->crearPDF($marcadores);
+            }
             if ($reporte === 'Ventas') {
                 $objExcel = $objReader->load('module/Administracion/view/administracion/mensualidad/plantilla_reporte_venta.xlsx');
 
@@ -148,14 +190,14 @@ class MensualidadController extends AbstractActionController {
                 $cont = 11;
                 $limBorder = 0;
                 foreach ($ventas as $venta) {
-                    $objActSheet->setCellValue('A' . $cont, $venta['reporteOBJ']->getPk_venta_id());
+                    $objActSheet->setCellValue('A' . $cont, $venta['ventaOBJ']->getPk_venta_id());
                     $objActSheet->setCellValue('B' . $cont, $venta['productoOBJ']->getNombreProducto());
                     $objActSheet->setCellValue('C' . $cont, $venta['productoOBJ']->getPrecioCosto());
                     $objActSheet->setCellValue('D' . $cont, $venta['productoOBJ']->getPrecioVenta());
-                    $objActSheet->setCellValue('E' . $cont, $venta['reporteOBJ']->getCantidadVenta());
-                    $objActSheet->setCellValue('F' . $cont, $venta['reporteOBJ']->getValorTotal());
-                    $objActSheet->setCellValue('G' . $cont, $venta['reporteOBJ']->getGanancia());
-                    $objActSheet->setCellValue('H' . $cont, $venta['reporteOBJ']->getFechaVenta());
+                    $objActSheet->setCellValue('E' . $cont, $venta['productoVentaOBJ']->getCantidadVenta());
+                    $objActSheet->setCellValue('F' . $cont, $venta['productoVentaOBJ']->getMonto());
+//                    $objActSheet->setCellValue('G' . $cont, $venta['ventaOBJ']->getGanancia());
+                    $objActSheet->setCellValue('H' . $cont, $venta['ventaOBJ']->getFechaVenta());
 
 
                     $cont ++;
@@ -166,6 +208,20 @@ class MensualidadController extends AbstractActionController {
 //                $objActSheet->duplicateStyle($objStyleB, 'A9:K' . $limBorder);
 
                 $file_name = $fechaI . '_' . $fechaF . '-Ventas' . '-' . $hoy;
+            }
+            if ($reporte === 'Ventas PDF') {
+                $ventasPDF = $this->getVentaDAO()->getReporteVenta($where = "DATE(venta.fechaVenta) BETWEEN '" . $fechaI . "' AND '" . $fechaF . "' ");
+
+                $plantilla = new ViewModel(array(
+                    'ventasPDF' => $ventasPDF,
+                    'fechaI' => $fechaI,
+                    'fechaF' => $fechaF,
+                ));
+                $plantilla->setTerminal(true);
+                $plantilla->setTemplate('administracion/mensualidad/reporteVentas');
+                $marcadores['reportePDF'] = $this->getServiceLocator()->get('viewrenderer')->render($plantilla);
+
+                $this->crearPDF($marcadores);
             }
             if ($reporte === 'Entrenos') {
                 $objExcel = $objReader->load('module/Administracion/view/administracion/mensualidad/plantilla_reporte_entreno.xlsx');
@@ -195,6 +251,20 @@ class MensualidadController extends AbstractActionController {
 //                $objActSheet->duplicateStyle($objStyleB, 'A9:K' . $limBorder);
 
                 $file_name = $fechaI . '_' . $fechaF . '-Entrenos' . '-' . $hoy;
+            }
+            if ($reporte === 'Entrenos PDF') {
+                $entrenosPDF = $this->getEntrenoDAO()->getEntrenos($where = "DATE(entreno.fechaHoraEntreno) BETWEEN '" . $fechaI . "' AND '" . $fechaF . "' ");
+
+                $plantilla = new ViewModel(array(
+                    'entrenosPDF' => $entrenosPDF,
+                    'fechaI' => $fechaI,
+                    'fechaF' => $fechaF,
+                ));
+                $plantilla->setTerminal(true);
+                $plantilla->setTemplate('administracion/mensualidad/reporteEntrenos');
+                $marcadores['reportePDF'] = $this->getServiceLocator()->get('viewrenderer')->render($plantilla);
+
+                $this->crearPDF($marcadores);
             }
 
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -236,9 +306,32 @@ class MensualidadController extends AbstractActionController {
     }
 
     public function indexmensualidadestadisticasAction() {
-//        $filtro = "mensualidad.estado = 'Eliminado'";
+        $anio = (int) $this->params()->fromQuery('anio', date('Y'));
         return new ViewModel(array(
-            'reporteMensualidad' => $this->getMensualidadDAO()->getReporteMensualidad()
+            'mensualidadenero' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-01-01', $anio . '-02-01'),
+            'mensualidadfebrero' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-02-01', $anio . '-03-01'),
+            'mensualidadmarzo' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-03-01', $anio . '-04-01'),
+            'mensualidadabril' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-04-01', $anio . '-05-01'),
+            'mensualidadmayo' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-05-01', $anio . '-06-01'),
+            'mensualidadjunio' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-06-01', $anio . '-07-01'),
+            'mensualidadjulio' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-07-01', $anio . '-08-01'),
+            'mensualidadagosto' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-08-01', $anio . '-09-01'),
+            'mensualidadseptiembre' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-09-01', $anio . '-10-01'),
+            'mensualidadoctubre' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-10-01', $anio . '-11-01'),
+            'mensualidadnoviembre' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-11-01', $anio . '-12-01'),
+            'mensualidaddiciembre' => $this->getMensualidadDAO()->getTotalMensualidadByFechas($anio . '-12-01', ($anio + 1) . '-01-01'),
+            'ventasenero' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-01-01', $anio . '-02-01'),
+            'ventasfebrero' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-02-01', $anio . '-03-01'),
+            'ventasmarzo' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-03-01', $anio . '-04-01'),
+            'ventasabril' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-04-01', $anio . '-05-01'),
+            'ventasmayo' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-05-01', $anio . '-06-01'),
+            'ventasjunio' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-06-01', $anio . '-07-01'),
+            'ventasjulio' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-07-01', $anio . '-08-01'),
+            'ventasagosto' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-08-01', $anio . '-09-01'),
+            'ventasseptiembre' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-09-01', $anio . '-10-01'),
+            'ventasoctubre' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-10-01', $anio . '-11-01'),
+            'ventasnoviembre' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-11-01', $anio . '-12-01'),
+            'ventasdiciembre' => $this->getMensualidadDAO()->getTotalVentaByFechas($anio . '-12-01', ($anio + 1) . '-01-01'),
         ));
     }
 
@@ -324,18 +417,6 @@ class MensualidadController extends AbstractActionController {
         $view->setTerminal(true);
         return $view;
     }
-
-//    public function seleccionarMensualidadAction() {
-////        $filtro = "cliente.estado = 'Registrado'";
-//        $idPregunta = (int) $this->params()->fromQuery('idPregunta', 0);
-//        $filtro = "opcion.pk_opcion_id NOT IN (SELECT pregunta_opcion.fk_opcion_id FROM pregunta_opcion WHERE pregunta_opcion.fk_pregunta_id = $idPregunta)";
-//        $view = new ViewModel(array(
-//            'opciones' => $this->getOpcionDAO()->getOpciones($filtro),
-//            'idPregunta' => $idPregunta
-//        ));
-//        $view->setTerminal(true);
-//        return $view;
-//    }
 
     public function getMensualidadSeleccionadaAction() {
         $idMensualidad = (int) $this->params()->fromQuery('idMensualidad', 0);
@@ -425,6 +506,16 @@ class MensualidadController extends AbstractActionController {
                     'controller' => 'mensualidad',
                     'action' => 'index',
         ));
+    }
+
+    public function crearPDF($marcadores = array()) {
+        $plantilla = file_get_contents('module/Administracion/view/administracion/mensualidad/imprimir.phtml');
+        $html = $this->setMarcadores($plantilla, $marcadores);
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $dompdf->stream('Rutina de ejercicios', array('Attachment' => 0));
     }
 
     public function setMarcadores($plantilla = '', $marcadores = array()) {

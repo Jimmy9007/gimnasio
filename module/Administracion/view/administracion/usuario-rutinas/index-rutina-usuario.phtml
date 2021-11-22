@@ -1,6 +1,6 @@
 <?php
 if ($sesionUsuario = $this->identity()) {
-    $nombreUsuario = $this->escapeHtml($sesionUsuario->NOM_USU) . ' ' . $this->escapeHtml($sesionUsuario->APELL_USU);
+    $nombreUsuario = $this->escapeHtml($sesionUsuario->nombreApellido);
     $idUsuarioRutina = $this->escapeHtml($sesionUsuario->pk_usuario_id);
 }
 $title = 'Rutinas de ' . $nombreUsuario;

@@ -1,38 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <!-- bootstrap-wysiwyg -->
-        <script src="/gimnasio/public/js/bootstrap-wysiwyg.min.js"></script>
-        <script src="/gimnasio/public/js/jquery.hotkeys.js"></script>
-        <script src="/gimnasio/public/js/prettify.js"></script>
-        <script src="/gimnasio/public/js/sistema/perfil.js"></script>
-    </head>
-
     <!-- page content -->
 
     <div class="">
-        <div class="page-title">
-            <div class="title_left">
-                <h3>CONTACTOS POPGYM</h3>
-            </div>
-
-            <div class="title_right">
-                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Buscar por...">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">Go!</button>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="clearfix"></div>
-
         <div class="row">
             <div class="col-md-12">
                 <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Usuarios <small>POPGYM</small></h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="<?php echo $this->url('administracion/default', array('controller' => 'perfil', 'action' => 'index')) ?>"><i class="fa fa-user"></i> Mi Perfil</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><a class="close-link"><i class="fa fa-close"></i></a>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
                     <div class="x_content">
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12 text-center">
@@ -57,13 +48,13 @@
                                 echo '<div class="col-md-4 col-sm-4 col-xs-12 profile_details">';
                                 echo '<div class="well profile_view">';
                                 echo '<div class = "col-sm-12">';
-                                echo '<h4 class = "brief"><i>ID: ' . $usuario->getPk_usuario_id() . '</i></h4>';
+                                echo '<h4 class = "brief"><i>ID: ' . $usuario->getPk_clienteempleado_id() . '</i></h4>';
                                 echo '<div class = "left col-xs-7">';
-                                echo '<h2>' . $usuario->getNOM_USU() . ' ' . $usuario->getAPELL_USU() . '</h2 > ';
+                                echo '<h2>' . $usuario->getNombre() . ' ' . $usuario->getApellido() . '</h2 > ';
                                 echo '<p><strong>Ocupacion: </strong>' . $usuario->getOcupacion() . ' </p>';
                                 echo '<ul class = "list-unstyled">';
-                                echo '<li><i class = "fa fa-building"></i> Direccion: ' . $usuario->getDIR_USU() . '</li>';
-                                echo '<li><i class = "fa fa-phone"></i> Phone #: ' . $usuario->getTEL_USU() . '</li>';
+                                echo '<li><i class = "fa fa-building"></i> Direccion: ' . $usuario->getDireccion() . '</li>';
+                                echo '<li><i class = "fa fa-phone"></i> Phone #: ' . $usuario->getTelefono() . '</li>';
                                 echo '</ul>
                                 </div>
                                 <div class = "right col-xs-5 text-center">';
@@ -83,7 +74,7 @@
                                 </p>
                                 </div>
                                 <div class = "col-xs-12 col-sm-6 emphasis">
-                                <button id="compose" type = "button" class = "btn btn-success btn-xs" title="Enviar Mensaje"> <i class = "fa fa-user" onclick="init_compose(' . $usuario->getPk_usuario_id() . ')">
+                                <button id="compose" type = "button" class = "btn btn-success btn-xs" title="Enviar Mensaje"> <i class = "fa fa-user">
                                 </i> <i class = "fa fa-comments-o"></i> </button>
                                 <button type = "button" class = "btn btn-primary btn-xs">
                                 <i class = "fa fa-user"> </i> View Profile
@@ -192,5 +183,103 @@
         </div>
     </div>
     <!-- /compose -->
+    <!-- bootstrap-wysiwyg -->
+    <script src="/gimnasio/public/vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js"></script>
+    <script src="/gimnasio/public/vendors/jquery.hotkeys/jquery.hotkeys.js"></script>
+    <script src="/gimnasio/public/vendors/google-code-prettify/src/prettify.js"></script>
+
+    <script>
+        /* COMPOSE */
+        function init_compose() {
+
+            if (typeof ($.fn.slideToggle) === 'undefined') {
+                return;
+            }
+            console.log('init_compose');
+
+            $('#compose, .compose-close').click(function () {
+                $('.compose').slideToggle();
+            });
+
+        }
+        /* WYSIWYG EDITOR */
+        function init_wysiwyg() {
+
+            if (typeof ($.fn.wysiwyg) === 'undefined') {
+                return;
+            }
+            console.log('init_wysiwyg');
+
+            function init_ToolbarBootstrapBindings() {
+                var fonts = ['Serif', 'Sans', 'Arial', 'Arial Black', 'Courier',
+                    'Courier New', 'Comic Sans MS', 'Helvetica', 'Impact', 'Lucida Grande', 'Lucida Sans', 'Tahoma', 'Times',
+                    'Times New Roman', 'Verdana'
+                ],
+                        fontTarget = $('[title=Font]').siblings('.dropdown-menu');
+                $.each(fonts, function (idx, fontName) {
+                    fontTarget.append($('<li><a data-edit="fontName ' + fontName + '" style="font-family:\'' + fontName + '\'">' + fontName + '</a></li>'));
+                });
+                $('a[title]').tooltip({
+                    container: 'body'
+                });
+                $('.dropdown-menu input').click(function () {
+                    return false;
+                })
+                        .change(function () {
+                            $(this).parent('.dropdown-menu').siblings('.dropdown-toggle').dropdown('toggle');
+                        })
+                        .keydown('esc', function () {
+                            this.value = '';
+                            $(this).change();
+                        });
+
+                $('[data-role=magic-overlay]').each(function () {
+                    var overlay = $(this),
+                            target = $(overlay.data('target'));
+                    overlay.css('opacity', 0).css('position', 'absolute').offset(target.offset()).width(target.outerWidth()).height(target.outerHeight());
+                });
+
+                if ("onwebkitspeechchange" in document.createElement("input")) {
+                    var editorOffset = $('#editor').offset();
+
+                    $('.voiceBtn').css('position', 'absolute').offset({
+                        top: editorOffset.top,
+                        left: editorOffset.left + $('#editor').innerWidth() - 35
+                    });
+                } else {
+                    $('.voiceBtn').hide();
+                }
+            }
+
+            function showErrorAlert(reason, detail) {
+                var msg = '';
+                if (reason === 'unsupported-file-type') {
+                    msg = "Unsupported format " + detail;
+                } else {
+                    console.log("error uploading file", reason, detail);
+                }
+                $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                        '<strong>File upload error</strong> ' + msg + ' </div>').prependTo('#alerts');
+            }
+
+            $('.editor-wrapper').each(function () {
+                var id = $(this).attr('id');	//editor-one
+
+                $(this).wysiwyg({
+                    toolbarSelector: '[data-target="#' + id + '"]',
+                    fileUploadError: showErrorAlert
+                });
+            });
+
+
+            window.prettyPrint;
+            prettyPrint();
+
+        }
+        $(document).ready(function () {
+            init_wysiwyg();
+            init_compose();
+        });
+    </script>
 </body>
 </html>

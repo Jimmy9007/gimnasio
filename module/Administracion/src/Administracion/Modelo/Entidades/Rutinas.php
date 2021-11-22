@@ -10,7 +10,6 @@ class Rutinas implements InputFilterAwareInterface {
     private $pk_rutina_id;
     private $DESCRIP_RUTINA;
     private $fechaRutina;
-    private $fk_instructor_id;
     private $fk_usuario_id;
 
     public function __construct(array $datos = null) {
@@ -42,7 +41,6 @@ class Rutinas implements InputFilterAwareInterface {
     }
 
 //------------------------------------------------------------------------------
-
     function getPk_rutina_id() {
         return $this->pk_rutina_id;
     }
@@ -53,10 +51,6 @@ class Rutinas implements InputFilterAwareInterface {
 
     function getFechaRutina() {
         return $this->fechaRutina;
-    }
-
-    function getFk_instructor_id() {
-        return $this->fk_instructor_id;
     }
 
     function getFk_usuario_id() {
@@ -75,14 +69,8 @@ class Rutinas implements InputFilterAwareInterface {
         $this->fechaRutina = $fechaRutina;
     }
 
-    function setFk_instructor_id($fk_instructor_id) {
-        $this->fk_instructor_id = $fk_instructor_id;
-    }
-
     function setFk_usuario_id($fk_usuario_id) {
         $this->fk_usuario_id = $fk_usuario_id;
     }
-
-
 
 }

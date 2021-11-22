@@ -2,9 +2,10 @@
 $nombreUsuario = 'SESION NO INICIADA';
 $titleNombreUsuario = 'SESION NO INICIADA';
 if ($sesionUsuario = $this->identity()) {
-    $nombreUsuario = $this->escapeHtml($sesionUsuario->NOM_USU) . ' ' . $this->escapeHtml($sesionUsuario->APELL_USU);
-    $sexo = $this->escapeHtml($sesionUsuario->SEXO);
-    $loginUsuario = $this->escapeHtml($sesionUsuario->LOGIN);
+    $nombreUsuario = $this->escapeHtml($sesionUsuario->nombreApellido);
+    $foto = $this->escapeHtml($sesionUsuario->rutaFotoPerfil);
+    $sexo = $this->escapeHtml($sesionUsuario->genero);
+    $loginUsuario = $this->escapeHtml($sesionUsuario->login);
     $titleNombreUsuario = 'Has iniciado sesion como usuario ' . $loginUsuario;
 }
 ?>
@@ -19,14 +20,7 @@ if ($sesionUsuario = $this->identity()) {
             <ul class="nav navbar-nav navbar-right">
                 <li class="">
                     <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <?php
-                        if ($sexo == 'Masculino') {
-                            echo '<img src="/gimnasio/public/img/profile/perfilHombre.png" alt="">';
-                        } else {
-                            echo '<img src="/gimnasio/public/img/profile/perfilMujer.png" alt="">';
-                        }
-                        ?>
-                        <span style="font-weight: bold"><?php echo $nombreUsuario; ?></span>
+                        <img src="/gimnasio/public/img/profile/<?php echo $foto; ?>" alt=""><?php echo $nombreUsuario; ?>
                         <span class=" fa fa-angle-down"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">

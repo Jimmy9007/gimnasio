@@ -31,6 +31,7 @@ class ProductoDAO extends AbstractTableGateway {
             'proveedor',
             'numfactura',
             'estado',
+            'imagenProducto',
             'fechahorareg',
             'fechahoramod',
         ));
@@ -43,6 +44,34 @@ class ProductoDAO extends AbstractTableGateway {
             $productos[] = new Producto($dato);
         }
         return $productos;
+    }
+
+    public function getDetalleProducto($id = 0) {
+        $producto = null;
+        $select = new Select($this->table);
+        $select->columns(array(
+                    'pk_producto_id',
+                    'codigoBarras',
+                    'nombreProducto',
+                    'descripcion',
+                    'cantidad',
+                    'precioCosto',
+                    'precioVenta',
+                    'fechaadquisicion',
+                    'proveedor',
+                    'numfactura',
+                    'estado',
+                    'imagenProducto',
+                    'fechahorareg',
+                    'fechahoramod',
+                ))
+                ->where(array('pk_producto_id' => $id))
+                ->limit(1);
+        $datos = $this->selectWith($select)->toArray();
+        foreach ($datos as $dato) {
+            $producto = new Producto($dato);
+        }
+        return $producto;
     }
 
     public function getProducto($idProducto = 0) {
@@ -71,7 +100,8 @@ class ProductoDAO extends AbstractTableGateway {
         }
         return $row;
     }
-     public function eliminar($idProducto) {
+
+    public function eliminar($idProducto) {
         $resultado = $this->delete(array("pk_producto_id" => (int) $idProducto));
         return $resultado;
     }

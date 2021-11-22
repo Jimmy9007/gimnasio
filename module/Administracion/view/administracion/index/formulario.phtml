@@ -10,8 +10,8 @@ echo $this->form()->openTag($form);
 $tipoUsuario = '';
 $hiddenCliente = '';
 if ($sesionUsuario = $this->identity()) {
-    $tipoUsuario = $this->escapeHtml($sesionUsuario->TIPO_USUARIO);
-    if ($tipoUsuario == 'Cliente') {
+    $tipoUsuario = $this->escapeHtml($sesionUsuario->fk_rol_id);
+    if ($tipoUsuario == '2') {
         $hiddenCliente = 'hidden';
     } else {
         $hiddenCliente = '';

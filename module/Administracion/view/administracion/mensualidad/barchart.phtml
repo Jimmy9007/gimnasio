@@ -1,0 +1,132 @@
+<?php
+$title = 'Reporte ';
+$this->headTitle($title);
+$this->headLink()->prependStylesheet($this->basePath('vendors/datatables.net-bs/css/dataTables.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/iCheck/skins/flat/green.css'));
+
+$this->headScript()->prependScript('$(document).ready(function() {'
+                . '$("#tblMensualidades").DataTable({'
+                . 'responsive: true,'
+                . '"iDisplayLength": 25,
+                    "sPaginationType": "full_numbers",
+                    "oLanguage": {
+                        "sLengthMenu": "Mostrar: _MENU_ registros por pagina",
+                        "sZeroRecords": "NO SE HA ENCONTRADO INFORMACION",
+                        "sInfo": "Mostrando <b>_START_</b> a <b>_END_</b> registros <br>TOTAL REGISTROS: <b>_TOTAL_</b> Registros</b>",
+                        "sInfoEmpty": "Mostrando 0 A 0 registros",
+                        "sInfoFiltered": "(Filtrados de un total de <b>_MAX_</b> registros)",
+                        "sLoadingRecords": "CARGANDO...",
+                        "sProcessing": "EN PROCESO...",
+                        "sSearch": "Buscar:",
+                        "sEmptyTable": "NO HAY INFORMACION DISPONIBLE PARA LA TABLA",
+                        "oPaginate": {
+                            "sFirst": "Inicio",
+                            "sLast": "Fin",
+                            "sNext": "Siguiente",
+                            "sPrevious": "Anterior"
+                        }
+                    },
+                    "aaSorting": [[0, "des"]]'
+                . '});'
+                . '});'
+                , 'text/javascript'
+                , array('noescape' => true))
+        ->prependFile('/gimnasio/public/js/sistema/reportes.js')
+        ->prependFile('/gimnasio/public/vendors/iCheck/icheck.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-scroller/js/dataTables.scroller.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-responsive/js/dataTables.responsive.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-buttons/js/dataTables.buttons.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-buttons/js/buttons.html5.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-buttons/js/buttons.print.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js')
+        ->prependFile('/gimnasio/public/vendors/pdfmake/build/pdfmake.min.js')
+        ->prependFile('/gimnasio/public/vendors/pdfmake/build/vfs_fonts.js')
+        ->prependFile('/gimnasio/public/vendors/datatables.net/js/jquery.dataTables.min.js')
+        ->prependFile('/gimnasio/public/vendors/Chart.js/dist/Chart.min.js');
+?>
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header" style="color: #d98e3d; text-shadow: 1px 1px #efc614">Estadisticas. <img src="/gimnasio/public/img/iconos/medidas.png"width="50" height="50"></h1>
+    </div>
+</div>
+<fieldset>
+    <p class="text-muted font-13 m-b-30">
+        A continuacion se pueden observar las graficas de los ingresos durante el año.
+    </p>
+</fieldset>
+<div class="row"></div>
+<label class="control-label col-md-3 col-sm-3 col-xs-12" for="interfaces">Año</label>
+<?php
+echo '<a href="' . $this->url('administracion/default', array('controller' => 'mensualidad', 'action' => 'indexReporteExcel')) . '"  class="btn btn-danger"> Cerrar</a>' . ' ';
+echo $this->form()->closeTag()
+?>
+<div class="col-md-6 col-sm-6 col-xs-12">
+    <select id="selectAnio" class="form-control" onchange="ponerAnio();">
+        <option value="">Seleccione..</option>
+        <option value="2021">2021</option>
+        <option value="2020">2020</option>
+    </select>
+    <span class="form-control-feedback right" aria-hidden="true"><i class="fa fa-calendar"></i></span>
+</div>
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Gráfico de barras<small>Sesiones</small></h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>                   
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <canvas id="reporteBarChart"></canvas>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var ctx = document.getElementById("reporteBarChart");
+    var reporteBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            datasets: [{
+                    label: 'Mensualidades',
+                    backgroundColor: "#26B99A",
+                    data: [<?php echo $this->enero; ?>, <?php echo $this->febrero; ?>,
+<?php echo $this->marzo; ?>, <?php echo $this->abril; ?>,
+<?php echo $this->mayo; ?>, <?php echo $this->junio; ?>,
+<?php echo $this->julio; ?>, <?php echo $this->agosto; ?>,
+<?php echo $this->septiembre; ?>, <?php echo $this->octubre; ?>,
+<?php echo $this->noviembre; ?>,<?php echo $this->diciembre; ?>]
+                }, {
+                    label: 'Ventas',
+                    backgroundColor: "#03586A",
+                    data: [<?php echo $this->eneroVenta; ?>, <?php echo $this->febreroVenta; ?>,
+<?php echo $this->marzoVenta; ?>, <?php echo $this->abrilVenta; ?>,
+<?php echo $this->mayoVenta; ?>, <?php echo $this->junioVenta; ?>,
+<?php echo $this->julioVenta; ?>, <?php echo $this->agostoVenta; ?>,
+<?php echo $this->septiembreVenta; ?>, <?php echo $this->octubreVenta; ?>,
+<?php echo $this->noviembreVenta; ?>,<?php echo $this->diciembreVenta; ?>]
+                }]
+        },
+
+        options: {
+            scales: {
+                yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+            }
+        }
+    });
+</script>

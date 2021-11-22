@@ -161,13 +161,10 @@ function validarGuardar() {
         alert('DEBE SELECCIONAR UN USUARIO PARA CONTINUAR');
         $("#selectUsu").focus();
         return false;
+    } else {
+        return confirm("¿ DESEA REGISTRAR LA RUTINA ?");
     }
-    if ($("#fk_instructor_id").val() === "") {
-        alert('DEBE SELECCIONAR UN INSTRUCTOR PARA CONTINUAR');
-        $("#selectInst").focus();
-        return false;
-    }
-    return confirm("¿ DESEA REGISTRAR LA RUTINA ?");
+
 }
 
 function setInfoEjercicio(idEjercicio) {

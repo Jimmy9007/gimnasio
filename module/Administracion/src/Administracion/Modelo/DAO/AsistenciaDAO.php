@@ -8,6 +8,7 @@ use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 use Administracion\Modelo\Entidades\Asistencia;
 use Administracion\Modelo\Entidades\Usuario;
+use Administracion\Modelo\Entidades\Clienteempleado;
 use Administracion\Modelo\Entidades\Mensualidad;
 
 class AsistenciaDAO extends AbstractTableGateway {
@@ -23,15 +24,20 @@ class AsistenciaDAO extends AbstractTableGateway {
         $select = new Select($this->table);
         $select->columns(array(
             'pk_asistencia_id',
-            'FECHA_ASIS',
             'fk_usuario_id',
+            'FECHA_ASIS',
         ));
         $select->join('usuario', 'usuario.pk_usuario_id = asistencia.fk_usuario_id', array(
-            'NOM_USU',
-            'APELL_USU',
-            'SEXO',
-            'IDENTIFICACION',
-            'FECHA_NAC_USU',
+            'pk_usuario_id',
+            'fk_clienteempleado_id',
+            'nombreApellido',
+            'genero',
+        ));
+        $select->join('clienteempleado', 'clienteempleado.pk_clienteempleado_id = usuario.fk_clienteempleado_id', array(
+            'pk_clienteempleado_id',
+            'identificacion',
+            'nombre',
+            'apellido',
         ));
         $select->join('mensualidad', 'usuario.pk_usuario_id = mensualidad.fk_usuario_id', array(
             'pk_mensualidad_id',
@@ -49,6 +55,7 @@ class AsistenciaDAO extends AbstractTableGateway {
             $asistenciaUsuario = array(
                 'usuarioOBJ' => new Usuario($dato),
                 'asistenciaOBJ' => new Asistencia($dato),
+                'clienteempleadoOBJ' => new Clienteempleado($dato),
                 'mensualidadOBJ' => new Mensualidad($dato),
                 'diasPreaviso' => $dato['diasPreaviso'],
             );

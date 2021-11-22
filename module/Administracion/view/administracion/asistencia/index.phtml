@@ -1,13 +1,43 @@
 <?php
-$title = 'Asistencias ';
-$this->headTitle($title);
-$this->headLink()->prependStylesheet($this->basePath('/public/css/dataTables.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/buttons.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/responsive.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/scroller.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/green.css'));
+//--------- CARGAR MENSAJES DE ALERTA ------------------------------------------
+//$formBusquedas = $this->formBusquedas;
+$flash = $this->flashMessenger();
+$notificaciones = [
+    'success' => array_merge($flash->getSuccessMessages(), $flash->getCurrentSuccessMessages()),
+    'error' => array_merge($flash->getErrorMessages(), $flash->getCurrentErrorMessages()),
+    'alert' => array_merge($flash->getMessages(), $flash->getCurrentMessages()),
+    'information' => array_merge($flash->getInfoMessages(), $flash->getCurrentInfoMessages()),
+    'warning' => array_merge($flash->getWarningMessages(), $flash->getCurrentWarningMessages()),
+];
+$flash->clearCurrentMessages('default');
+$flash->clearCurrentMessages('info');
+$flash->clearCurrentMessages('success');
+$flash->clearCurrentMessages('warning');
+$flash->clearCurrentMessages('error');
+$mensaje = 'ASISTENCIA';
+$tipo = 'info';
+foreach (array_filter($notificaciones) as $tipo => $mensajes) {
+    foreach ($mensajes as $mensaje) {
+        
+    }
+}
+//------------------------------------------------------------------------------
 
-$this->headScript()->prependScript('$(document).ready(function() {'
+$title = 'Usuarios';
+$this->headTitle($title);
+$this->headLink()->prependStylesheet($this->basePath('vendors/datatables.net-bs/css/dataTables.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/animate.css/animate.min.css'))
+        ->prependStylesheet($this->basePath('vendors/iCheck/skins/flat/green.css'))
+        ->prependStylesheet($this->basePath('vendors/pnotify/dist/pnotify.css'))
+        ->prependStylesheet($this->basePath('vendors/pnotify/dist/pnotify.buttons.css'))
+        ->prependStylesheet($this->basePath('vendors/pnotify/dist/pnotify.nonblock.css'));
+
+$this->headScript()->prependScript('$(document).ajaxStop($.unblockUI); '
+                . '$(document).ready(function() {'
                 . '$("#tblAsistencias").DataTable({'
                 . 'responsive: true,'
                 . '"iDisplayLength": 25,
@@ -31,17 +61,39 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                     },
                     "aaSorting": [[0, "des"]]'
                 . '});'
+                . '//------------------------------------------------------------------------------
+                    // MANIPULACION DEL EVENTO DE CIERRE DEL MODAL
+                    //------------------------------------------------------------------------------
+                    $("#modalFormulario").on("hide.bs.modal", function (e) {
+                        return confirm("¿ DESEAS CERRAR EL FORMULARIO ?");
+                    });
+                  new PNotify({
+                     title: "' . $mensaje . '",
+                     text: "POPGYM",
+                     type: "' . $tipo . '",
+                     styling: "bootstrap3"
+                    });'
                 . '});'
                 , 'text/javascript'
                 , array('noescape' => true))
-        ->prependFile('/gimnasio/public/js/sistema/asistencia.js')
-        ->prependFile('/gimnasio/public/js/datatables.scroller.min.js')
-        ->prependFile('/gimnasio/public/js/responsive.bootstrap.js')
-        ->prependFile('/gimnasio/public/js/dataTables.responsive.min.js')
-        ->prependFile('/gimnasio/public/js/buttons.bootstrap.min.js')
-        ->prependFile('/gimnasio/public/js/dataTables.buttons.min.js')
-        ->prependFile('/gimnasio/public/js/dataTables.bootstrap.min.js')
-        ->prependFile('/gimnasio/public/js/jquery.dataTables.min.js');
+        ->prependFile($this->basePath('js/sistema/asistencia.js'))
+        ->prependFile($this->basePath('js/jquery.blockUI.js'))
+        ->prependFile($this->basePath('js/bootstrap-notify.min.js'))
+        ->prependFile($this->basePath('vendors/iCheck/icheck.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-scroller/js/dataTables.scroller.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-responsive/js/dataTables.responsive.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/dataTables.buttons.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/buttons.html5.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/buttons.print.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-keytable/js/dataTables.keyTable.min.js'))
+        ->prependFile($this->basePath('vendors/pdfmake/build/pdfmake.min.js'))
+        ->prependFile($this->basePath('vendors/pdfmake/build/vfs_fonts.js'))
+        ->prependFile($this->basePath('vendors/datatables.net/js/jquery.dataTables.min.js'))
+        ->prependFile($this->basePath('vendors/pnotify/dist/pnotify.js'));
 ?>
 <div class="page-title">
     <div class="title_left">
@@ -66,10 +118,23 @@ $this->headScript()->prependScript('$(document).ready(function() {'
             <div class="x_title">
                 <h2>Registros del Sistema <small>Asistencia</small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-                    <li>    
+
+
+                    <div class="btn-group">
                         <button type="button" onclick="verAgregarAsistencia()" class="btn btn-success"><i class="fa fa-plus"></i> Registrar Asistencia</button>
-                    </li>
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="<?php echo $this->url('login/default', array('controller' => 'asistencia', 'action' => 'asistencia')) ?>"><i class="fa fa-users pull-right"></i> Asistencias</a>
+                            </li>              
+                        </ul>
+                    </div>                    
                 </ul>
+
+
+
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -81,7 +146,7 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                         <tr>
                             <th>ID</th>
                             <th>Usuario</th>
-                            <th>Cedula</th>
+                            <th>Identificacion</th>
                             <th>Fecha y Hora</th>
                             <th>Dias Faltantes</th>
                             <th></th>
@@ -100,8 +165,8 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                             }
                             echo '<tr>';
                             echo '<td>' . $asistencia['asistenciaOBJ']->getPk_asistencia_id() . '</td>';
-                            echo '<td>' . $asistencia['usuarioOBJ']->getNOM_USU() . ' ' . $asistencia['usuarioOBJ']->getAPELL_USU() . '</td>';
-                            echo '<td>' . $asistencia['usuarioOBJ']->getIDENTIFICACION() . '</td>';
+                            echo '<td>' . $asistencia['usuarioOBJ']->getNombreApellido() . '</td>';
+                            echo '<td>' . $asistencia['clienteempleadoOBJ']->getIdentificacion() . '</td>';
                             echo '<td>' . $asistencia['asistenciaOBJ']->getFECHA_ASIS() . '</td>';
                             echo '<td ' . $estilo . '>' . $asistencia['diasPreaviso'] . '</td>';
 
@@ -168,4 +233,9 @@ $this->headScript()->prependScript('$(document).ready(function() {'
         </div>
     </div>
 </div>
-
+<div id="msgBloqueo" style="display: none;"> 
+    SU SOLICITUD ESTA SIENDO PROCESADA, POR FAVOR ESPERE <i class="fa fa-spinner fa-spin fa-lg"></i>
+</div>
+<!-- PNotify -->
+<script src="<?php echo $this->basePath('vendors/pnotify/dist/pnotify.buttons.js'); ?>"></script>
+<script src="<?php echo $this->basePath('vendors/pnotify/dist/pnotify.nonblock.js'); ?>"></script>

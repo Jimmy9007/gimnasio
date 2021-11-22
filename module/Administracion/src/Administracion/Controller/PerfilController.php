@@ -12,14 +12,16 @@ namespace Administracion\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Administracion\Modelo\Entidades\Clienteempleado;
 use Administracion\Modelo\Entidades\Usuario;
-use Administracion\Modelo\Entidades\Chat;
+use Administracion\Formularios\ClienteempleadoForm;
 use Administracion\Formularios\UsuarioForm;
 
 class PerfilController extends AbstractActionController {
 
-    private $rutaArchivos = '../gimnasio/public/img/profile';
+    private $rutaArchivos = 'C:/xampp_7/htdocs/gimnasio/public/img/profile';
     private $usuarioDAO;
+    private $clienteempleadoDAO;
     private $chatDAO;
 
     public function getUsuarioDAO() {
@@ -28,6 +30,14 @@ class PerfilController extends AbstractActionController {
             $this->usuarioDAO = $sm->get('Administracion\Modelo\DAO\UsuarioDAO');
         }
         return $this->usuarioDAO;
+    }
+
+    public function getClienteempleadoDAO() {
+        if (!$this->clienteempleadoDAO) {
+            $sm = $this->getServiceLocator();
+            $this->clienteempleadoDAO = $sm->get('Administracion\Modelo\DAO\ClienteempleadoDAO');
+        }
+        return $this->clienteempleadoDAO;
     }
 
     public function getChatDAO() {
@@ -43,14 +53,37 @@ class PerfilController extends AbstractActionController {
         if ($action == 'detail' || $action == 'buscar') {
             $required = false;
         }
-        $form = new UsuarioForm($action, $onsubmit, $required);
+        $form = new ClienteempleadoForm($action, $onsubmit, $required);
         if ($action == 'edit') {
-            $form->get('PASSWORD')->setAttribute('readonly', true);
-            $form->get('PASSWORD')->setAttribute('required', false);
-            $form->get('PASSWORDSEGURO')->setAttribute('readonly', true);
-            $form->get('PASSWORDSEGURO')->setAttribute('required', false);
-            $form->get('LOGIN')->setAttribute('readonly', true);
-            $form->get('LOGIN')->setAttribute('required', false);
+            $form->get('estado')->setAttribute('readonly', true);
+            $form->get('estado')->setAttribute('required', false);
+            $form->get('estado')->setAttribute('type', 'text');
+        }
+        if ($idPerfil != 0) {
+            $perfilOBJ = $this->getClienteempleadoDAO()->getClienteempleado($idPerfil);
+            $form->bind($perfilOBJ);
+        }
+        return $form;
+    }
+
+    function getFormulario2($action = '', $onsubmit = '', $idPerfil = 0) {
+        $required = true;
+        if ($action == 'detail' || $action == 'buscar') {
+            $required = false;
+        }
+        $form = new UsuarioForm($action, $onsubmit, $required);
+        if ($action == 'editfoto') {
+            $form->get('rutaFotoPerfil')->setAttribute('readonly', false);
+            $form->get('rutaFotoPerfil')->setAttribute('required', true);
+            $form->get('rutaFotoPerfil')->setAttribute('type', 'file');
+            $form->get('fk_clienteempleado_id')->setAttribute('readonly', true);
+            $form->get('fk_clienteempleado_id')->setAttribute('required', false);
+            $form->get('fk_clienteempleado_id')->setAttribute('type', 'text');
+            $form->get('fk_rol_id')->setAttribute('readonly', true);
+            $form->get('fk_rol_id')->setAttribute('required', false);
+            $form->get('fk_rol_id')->setAttribute('type', 'text');
+            $form->get('genero')->setAttribute('readonly', true);
+            $form->get('genero')->setAttribute('required', false);
         }
         if ($idPerfil != 0) {
             $perfilOBJ = $this->getUsuarioDAO()->getUsuario($idPerfil);
@@ -62,17 +95,19 @@ class PerfilController extends AbstractActionController {
 //------------------------------------------------------------------------------
     public function indexAction() {
         $idUsuario = '';
+        $idClienteEmpleado = '';
         if ($sesionUsuario = $this->identity()) {
             $idUsuario = $sesionUsuario->pk_usuario_id;
+            $idClienteEmpleado = $sesionUsuario->fk_clienteempleado_id;
         }
         return new ViewModel(array(
-            'usuario' => $this->getUsuarioDAO()->getPerfilUsuario($idUsuario)
+            'usuario' => $this->getClienteempleadoDAO()->getPerfilUsuario($idClienteEmpleado),
         ));
     }
 
     public function perfilesUsuariosAction() {
         return new ViewModel(array(
-            'usuarios' => $this->getUsuarioDAO()->getUsuarios()
+            'usuarios' => $this->getClienteempleadoDAO()->getClienteempleados(),
         ));
     }
 
@@ -80,11 +115,11 @@ class PerfilController extends AbstractActionController {
         $idUsuario = (int) $this->params()->fromQuery('idUsuario', 0);
     }
 
-    public function editAction() {
+    public function editfotoAction() {
         $idPerfil = (int) $this->params()->fromQuery('idPerfil', 0);
-        $action = 'edit';
-        $onsubmit = 'return confirm("¿ DESEA GUARDAR ESTE USUARIO ?")';
-        $form = $this->getFormulario($action, $onsubmit, $idPerfil);
+        $action = 'editfoto';
+        $onsubmit = 'return confirm("¿ DESEA ACTUALIZAR SU FOTO DE PERFIL ?")';
+        $form = $this->getFormulario2($action, $onsubmit, $idPerfil);
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
@@ -104,57 +139,20 @@ class PerfilController extends AbstractActionController {
                     ));
                     if ($httpadapter->receive($files['rutaFotoPerfil']['name'])) {
 
-                        $perfilOBJ->setrutaFotoPerfil($archivo);
+                        $perfilOBJ->setRutaFotoPerfil($archivo);
                         if ($this->getUsuarioDAO()->guardar($perfilOBJ) == 0) {
+
                             unlink($this->rutaArchivos . '/' . $archivo);
                         }
+                        $this->flashMessenger()->addSuccessMessage('SU FOTO FUE ACTUALIZADO CON EXITO EN POPGYM');
                         return $this->redirect()->toRoute('administracion/default', array(
                                     'controller' => 'perfil',
                                     'action' => 'index',
                         ));
                     }
-                } else {
-
-//                   si no guarda la foto hace esto
-
-
-                    $idUsuario = (int) $this->params()->fromQuery('idUsuario', 0);
-                    $action = 'edit';
-                    $onsubmit = 'return confirm("¿ DESEA GUARDAR ESTE USUARIO ?")';
-                    $form = $this->getFormulario($action, $onsubmit, $idUsuario);
-                    $request = $this->getRequest();
-                    if ($request->isPost()) {
-                        $form->setData($request->getPost());
-                        if ($form->isValid()) {
-                            $usuarioOBJ = new Usuario($form->getData());
-                            if ($usuarioOBJ->getSEXO() == 'Masculino') {
-                                $usuarioOBJ->setRutaFotoPerfil('perfilHombre.png');
-                            } else {
-                                $usuarioOBJ->setRutaFotoPerfil('perfilMujer.png');
-                            }
-
-                            $this->getUsuarioDAO()->guardar($usuarioOBJ);
-                            return $this->redirect()->toRoute('administracion/default', array(
-                                        'controller' => 'perfil',
-                                        'action' => 'index',
-                            ));
-                        } else {
-                            return $this->redirect()->toRoute('administracion/default', array(
-                                        'controller' => 'perfil',
-                                        'action' => 'index',
-                            ));
-                        }
-                    }
-                    $view = new ViewModel(array(
-                        'form' => $form,
-                    ));
-                    $view->setTemplate('administracion/usuario/formulario');
-                    $view->setTerminal(true);
-                    return $view;
-
-//                fin no guarda la foto
                 }
             } else {
+                $this->flashMessenger()->addErrorMessage('SE HA PRESENTADO UN INCONVENIENTE, SU FOTO NO FUE ACTUALIZADA EN POPGYM');
                 return $this->redirect()->toRoute('administracion/default', array(
                             'controller' => 'perfil',
                             'action' => 'index',
@@ -163,6 +161,50 @@ class PerfilController extends AbstractActionController {
         }
         $view = new ViewModel(array(
             'form' => $form,
+        ));
+        $view->setTemplate('administracion/perfil/formulariofoto');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    public function editAction() {
+        $idPerfil = (int) $this->params()->fromQuery('idPerfil', 0);
+        $action = 'edit';
+        $onsubmit = 'return confirm("¿ DESEA ACTUALIZAR SUS DATOS ?")';
+        $form = $this->getFormulario($action, $onsubmit, $idPerfil);
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setData($request->getPost());
+            if ($form->isValid()) {
+                $usuarioOBJ = new Clienteempleado($form->getData());
+                try {
+                    $this->getClienteempleadoDAO()->guardar($usuarioOBJ);
+                    $this->flashMessenger()->addSuccessMessage('SUS DATOS FUERON ACTUALIZADOS CON EXITO EN POPGYM');
+                } catch (\Exception $ex) {
+                    $this->flashMessenger()->addErrorMessage('SE HA PRESENTADO UN INCONVENIENTE, SUS DATOS NO FUERON ACTUALIZADO CON EXITO EN POPGYM');
+                    $msgLog = "\n [ " . date('Y-m-d H:i:s') . " ]  -  PERFIL  - AdministradorController->editAction \n"
+                            . $ex->getMessage()
+                            . "\n *********************************************************************** \n";
+                    $file = fopen("C:popgym.log", "a");
+                    fwrite($file, $msgLog);
+                    fclose($file);
+                }
+
+
+                return $this->redirect()->toRoute('administracion/default', array(
+                            'controller' => 'perfil',
+                            'action' => 'index',
+                ));
+            } else {
+                $this->flashMessenger()->addErrorMessage('SE HA PRESENTADO UN INCONVENIENTE, SUS DATOS NO FUERON ACTUALIZADO CON EXITO EN POPGYM');
+                return $this->redirect()->toRoute('administracion/default', array(
+                            'controller' => 'perfil',
+                            'action' => 'index',
+                ));
+            }
+        }
+        $view = new ViewModel(array(
+            'form' => $form
         ));
         $view->setTemplate('administracion/perfil/formulario');
         $view->setTerminal(true);

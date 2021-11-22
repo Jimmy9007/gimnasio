@@ -84,3 +84,8 @@ function enviarPreaviso() {
 
 
 }
+function ponerAnio() {
+    var anio = $("#selectAnio").val();
+    alert(anio);
+    location.href = "?anio=" + anio;
+}

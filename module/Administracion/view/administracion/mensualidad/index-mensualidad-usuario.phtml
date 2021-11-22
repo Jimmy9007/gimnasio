@@ -1,11 +1,12 @@
 <?php
 $title = 'Mensualidades ';
 $this->headTitle($title);
-$this->headLink()->prependStylesheet($this->basePath('/public/css/dataTables.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/buttons.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/responsive.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/scroller.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/green.css'));
+$this->headLink()->prependStylesheet($this->basePath('vendors/datatables.net-bs/css/dataTables.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/iCheck/skins/flat/green.css'));
 
 $this->headScript()->prependScript('$(document).ready(function() {'
                 . '$("#tblMensualidades").DataTable({'
@@ -34,14 +35,21 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                 . '});'
                 , 'text/javascript'
                 , array('noescape' => true))
-        ->prependFile('/gimnasio/public/js/sistema/mensualidad.js')
-        ->prependFile('/gimnasio/public/js/datatables.scroller.min.js')
-        ->prependFile('/gimnasio/public/js/responsive.bootstrap.js')
-        ->prependFile('/gimnasio/public/js/dataTables.responsive.min.js')
-        ->prependFile('/gimnasio/public/js/buttons.bootstrap.min.js')
-        ->prependFile('/gimnasio/public/js/dataTables.buttons.min.js')
-        ->prependFile('/gimnasio/public/js/dataTables.bootstrap.min.js')
-        ->prependFile('/gimnasio/public/js/jquery.dataTables.min.js');
+        ->prependFile($this->basePath('js/sistema/mensualidad.js'))
+        ->prependFile($this->basePath('vendors/iCheck/icheck.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-scroller/js/dataTables.scroller.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-responsive/js/dataTables.responsive.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/dataTables.buttons.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/buttons.html5.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/buttons.print.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-keytable/js/dataTables.keyTable.min.js'))
+        ->prependFile($this->basePath('vendors/pdfmake/build/pdfmake.min.js'))
+        ->prependFile($this->basePath('vendors/pdfmake/build/vfs_fonts.js'))
+        ->prependFile($this->basePath('vendors/datatables.net/js/jquery.dataTables.min.js'));
 ?>
 <div class="page-title">
     <div class="title_left">
@@ -65,12 +73,12 @@ $this->headScript()->prependScript('$(document).ready(function() {'
         <div class="x_panel">
             <div class="x_title">
                 <h2>Registros del Sistema <small>Mensualidad</small></h2>
-<!--                <ul class="nav navbar-right panel_toolbox">
-                    <li>    
-                        <button type="button" onclick="verAgregarMensualidad()" class="btn btn-success"><i class="fa fa-plus"></i> Registrar Mensualidad</button>                    
-                        <button type="button" onclick="enviarPreaviso()" class="btn btn-success"><i class="fa fa-envelope"></i> Enviar Preaviso</button>
-                    </li>
-                </ul>-->
+                <!--                <ul class="nav navbar-right panel_toolbox">
+                                    <li>    
+                                        <button type="button" onclick="verAgregarMensualidad()" class="btn btn-success"><i class="fa fa-plus"></i> Registrar Mensualidad</button>                    
+                                        <button type="button" onclick="enviarPreaviso()" class="btn btn-success"><i class="fa fa-envelope"></i> Enviar Preaviso</button>
+                                    </li>
+                                </ul>-->
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -81,8 +89,7 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Usuario</th>
-                            <th>Cedula</th>
+                            <th>Usuario</th>   
                             <th>FechaInicio</th>
                             <th>FechaFinal</th>
                             <th>Dias Faltantes</th>
@@ -109,8 +116,7 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                             }
                             echo '<tr>';
                             echo '<td>' . $mensualidad['mensualidadOBJ']->getPk_mensualidad_id() . '</td>';
-                            echo '<td>' . $mensualidad['usuarioOBJ']->getNOM_USU() . ' ' . $mensualidad['usuarioOBJ']->getAPELL_USU() . '</td>';
-                            echo '<td>' . $mensualidad['usuarioOBJ']->getIDENTIFICACION() . '</td>';
+                            echo '<td>' . $mensualidad['usuarioOBJ']->getNombreApellido() . '</td>';
                             echo '<td>' . $mensualidad['mensualidadOBJ']->getFECHA_MENS() . '</td>';
                             echo '<td>' . $mensualidad['mensualidadOBJ']->getFECHA_MENS_FIN() . '</td>';
                             echo '<td ' . $estiloDiasFal . 'title="Dias Faltantes">' . $mensualidad['diasPreaviso'] . '</td>';

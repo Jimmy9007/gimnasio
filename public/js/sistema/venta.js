@@ -1,42 +1,182 @@
+function bloqueoAjax() {
+    $.blockUI(
+            {
+                message: $('#msgBloqueo'),
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: .85,
+                    color: '#fff',
+                    'z-index': 10000
+                }
+            }
+    );
+    $('.blockOverlay').attr('style', $('.blockOverlay').attr('style') + 'z-index: 1100 !important');
+}
+function confirmarCerrar() {
+    Swal.fire({
+        title: 'DESEAS CERRAR EL FORMULARIO?',
+        text: "JOSANDRO",
+        icon: 'warning',
+//        imageUrl: 'https://dobleclick.net.co/wp-content/uploads/2019/07/logo.png',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: '<i class="fa fa-close"></i> Confirmar',
+        cancelButtonText: 'Cancelar',
+    }).then(function (result) {
+        if (result.value) {
+            return false;
+        } else {
+            $('#modalFormulario').modal('toggle');
+        }
+
+    });
+}
+//-----------------------------GUARDAR------------------------------------------
 function verAgregarVenta() {
-    $.get('/gimnasio/administracion/venta/add', {}, setFormulario);
+    $.get('registrar', {}, setFormulario);
+    bloqueoAjax();
 }
-function verDetalle(idVenta) {
-    $.get('/gimnasio/administracion/venta/detail', {idVenta: idVenta}, setFormulario);
-}
-function verEditar(idVenta) {
-    $.get('/gimnasio/administracion/venta/edit', {idVenta: idVenta}, setFormulario);
-}
-//--------------------
 function setFormulario(datos) {
     //console.log(datos);
     $("#divContenido").html(datos);
     $('#modalFormulario').modal('show');
 }
-function eliminar(idVenta) {
-    if (confirm("¿ DESEA ELIMINAR ESTA VENTA ?")) {
-        $.post('/gimnasio/administracion/venta/delete', {idVenta: idVenta}, setEliminar, 'json');
-        location.reload();
+function buscarProducto() {
+    $.get('/gimnasio/administracion/producto/seleccionarProducto', {}, setSeleccionarProductos);
+}
+function selectProducto(idProducto) {
+    $.get('/gimnasio/administracion/producto/getProducto', {idProducto: idProducto}, setProducto);
+}
+function agregar(idProducto, nombre, precio) {
+    var id = $('#incremental').val();
+    var cantidad = $('#cantidadVenta').val();
+    var tabla = '<tr id="fila_' + id + '">' +
+            '<td><p id="idProductoTxt_' + id + '"></p><fieldset hidden><input type="number" id="idProducto_' + id + '" name="idProducto_' + id + '" readonly></fieldset></td></td>' +
+            '<td><p id="nombre_' + id + '"></p></td>' +
+            '<td><p id="precio_' + id + '"></p></td>' +
+            '<td><input type="number" min="1" class="form-control" placeholder="Ingrese Cantidad" onchange="calcular(' + id + ')" id="cantidad_' + id + '" name="cantidad_' + id + '" required></td>' +
+            '<td class="cell"><p id="montoTxt_' + id + '"></p><fieldset hidden><input type="number" id="monto_' + id + '" name="monto_' + id + '" readonly></fieldset></td>' +
+            '<td><a href="javascript:quitarCobro(' + id + ')" title="Quitar cobro"><i class="fa fa-trash"></i></a></td>' +
+            '</tr>';
+    if ($('#trInicial').length > 0) {
+        $('#tblCobros tbody').html(tabla);
+    } else {
+        $('#tblCobros').append(tabla);
     }
+    $('#cantidad_' + id).val(cantidad);
+    $('#modalAddProducto').modal('hide');
+    $('#modalAnexarProducto').modal('hide');
+    $('#idProducto_' + id).val(idProducto);
+    $('#idProductoTxt_' + id).text(idProducto);
+    $('#nombre_' + id).text(nombre);
+    $('#precio_' + id).text(precio);
+    $('#incremental').val(parseInt($('#incremental').val()) + 1);
+    calcular(id);
+}
+function calcular(id) {
+    var nValor = $('#precio_' + id).text();
+    var nCantidad = $('#cantidad_' + id).val();
+    var valorTotal = nCantidad * nValor;
+    $('#montoTxt_' + id).text(valorTotal);
+    $('#monto_' + id).val(valorTotal);
+    var sumTotal = 0;
+    $(".cell").each(function (i) {
+        sumTotal = sumTotal + parseFloat($(this).text());
+    });
+    $('#total').text(sumTotal);
+
+}
+function quitarCobro(id) {
+    $("#fila_" + id).remove();
+    calcular(id);
+}
+function registrarVenta() {
+    if ($('#total').text() == 0 || $('#total').text() == 'NaN') {
+        Swal.fire('FALTA IMPLEMENTAR PRODUCTOS', 'SPARTANS', 'error');
+        return false;
+    } else {
+        var confirmar = confirm("DESEA REGISTRAR LA VENTA ?");
+        if (confirmar == true) {
+            bloqueoAjax();
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+//-------------------------------EDITAR-----------------------------------------
+function anexarArticulo(idVenta) {
+    location.href = 'anexarArticulo/' + idVenta;
+}
+function seleccionarProducto(idVenta) {
+    $.get('/gimnasio/administracion/producto/seleccionarProductoEditar', {idVenta: idVenta}, setSeleccionarProductos);
+    $("#idVentaSelect").val(idVenta);
+}
+function selectProductoEditar(idProducto) {
+    $.get('/gimnasio/administracion/producto/getProductoEditar', {idProducto: idProducto}, setProducto);
+}
+function validarGuardar() {
+    if ($("#fk_producto_id").val() == '') {
+        alert('FALTA IMPLEMENTAR PRODUCTOS');
+        return false;
+    }
+    if ($("#cantidadVenta").val() == '') {
+        alert('DEBE INGRESAR CANTIDAD');
+        return false;
+    }
+}
+//-----------------------------ELIMINAR-----------------------------------------
+function eliminarArticulo(idVenta, idProducto) {
+    Swal.fire({
+        title: 'DESEAS ELIMINAR EL PRODUCTO?',
+        text: "SPARTANS",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: '<i class="fa fa-close"></i> Confirmar',
+        cancelButtonText: 'Cancelar',
+    }).then(function (result) {
+        if (result.value) {
+            $.get('/gimnasio/administracion/venta/eliminarArticulo', {idVenta: idVenta, idProducto: idProducto}, setEliminar, 'json');
+            bloqueoAjax();
+        } else {
+            return false;
+        }
+    });
+}
+function eliminar(idVenta) {
+    Swal.fire({
+        title: '¿ DESEA ELIMINAR ESTA VENTA ?',
+        text: "SPARTANS",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: '<i class="fa fa-close"></i> Confirmar',
+        cancelButtonText: 'Cancelar',
+    }).then(function (result) {
+        if (result.value) {
+            $.get('delete', {idVenta: idVenta}, setEliminar, 'json');
+            bloqueoAjax();
+        } else {
+            return false;
+        }
+    });
 }
 function setEliminar(datos) {
     if (datos['eliminado']) {
-        alert(" VENTA ELIMINADO DEL SISTEMA ");
+        window.location.reload();
     } else {
-        alert(" LA VENTA NO FUE ELIMINADO \n\n SE HA PRESENTADO UN COMPORTAMIENTO INESPERADO EN EL SISTEMA \n EN CASO DE PERSISTIR ESTE COMPORTAMIENTO COMUNIQUESE CON EL ADMINISTRADOR");
+        Swal.fire('ERROR AL ELIMINAR', 'SPARTANS', 'error');
     }
 }
-
 //------------------------------------------------------------------------------
-function seleccionarProducto() {
-    var idVenta = $("#pk_venta_id").val();
-    $.get('/gimnasio/administracion/producto/seleccionarProducto', {idVenta: idVenta}, setSeleccionarProductos);
-}
-
-function seleccionarProducto2(idVenta) {
-    $.get('/gimnasio/administracion/producto/seleccionarProducto', {idVenta: idVenta}, setSeleccionarProductos);
-    $("#idVentaSelect").val(idVenta);
-}
 function setSeleccionarProductos(datos) {
     $("#divAnexarProducto").html(datos);//pone los datos
     $("#tblProductos").DataTable({
@@ -64,24 +204,6 @@ function setSeleccionarProductos(datos) {
     });
     $('#modalAnexarProducto').modal('show');//este muetra mustra los datos
 }
-
-function selectProducto(idProducto) {
-    $.get('/gimnasio/administracion/producto/getProducto', {idProducto: idProducto}, setProducto);
-}
-function addProducto() {
-    if ($("#fk_producto_id").val() == '') {
-        alert("DEBE SELECCIONAR UN PRODUCTO");
-    } else if ($("#cantidadVenta").val() == '') {
-        alert("DEBE INGRSAR CANTIDAD");
-    } else {
-        var idVenta = $("#pk_venta_id").val();
-        var idProducto = $("#pk_producto_id").val();
-        var cantidad = $("#cantidadVenta").val();
-        var valorTotal = $("#valorTotal").val();
-        $.get('/gimnasio/administracion/venta/addCarrito', {idProducto: idProducto, cantidad: cantidad, valorTotal: valorTotal, idVenta: idVenta}, );
-
-    }
-}
 function setProducto(datos) {
     $("#divAddProducto").html(datos);//pone los datos
     $('#modalAddProducto').modal('show');//este muetra mustra los datos
@@ -89,20 +211,11 @@ function setProducto(datos) {
     $("#divInfoProducto").show('slow');
     limpiarCampo();
 }
-
-function validarGuardar() {
-    if ($("#fk_producto_id").val() == '') {
-        alert("DEBE SELECCIONAR UN PRODUCTO");
-        return false;
-    } else if ($("#cantidadVenta").val() == '') {
-        alert("DEBE INGRSAR CANTIDAD");
-        return false;
-    } else {
-        return true;
-    }
+function limpiarCampo() {
+    $("#cantidadVenta").val("");
+    $("#valorTotal").val("");
+    $("#ganancia").val("");
 }
-//------------------------------------------------------------------------------
-
 function operacionesVenta() {
     var cantidad = $("#cantidadVenta").val();
     var precio = $("#precioVenta").val();
@@ -114,13 +227,4 @@ function operacionesVenta() {
     $("#ganancia").val(vGanancia);
 
 }
-function limpiarCampo() {
-    $("#cantidadVenta").val("");
-    $("#valorTotal").val("");
-    $("#ganancia").val("");
-}
-
-
-function anexarArticulo(idVenta) {
-    location.href = 'anexarArticulo/' + idVenta;
-}
+//------------------------------------------------------------------------------

@@ -205,7 +205,7 @@ class ProductoForm extends Form {
         ));
 
         $this->add(array(
-            'name' => 'imagen',
+            'name' => 'imagenProducto',
             'attributes' => array(
                 'type' => 'text',
                 'class' => 'form-control col-md-7 col-xs-12',
@@ -214,7 +214,7 @@ class ProductoForm extends Form {
                 'maxlength' => 50,
 //                'required' => $required,
                 'readonly' => $required,
-                'id' => 'imagen',
+                'id' => 'imagenProducto',
             )
         ));
 //------------------------------------------------------------------------------

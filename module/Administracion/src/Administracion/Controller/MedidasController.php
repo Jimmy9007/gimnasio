@@ -28,6 +28,14 @@ class MedidasController extends AbstractActionController {
         return $this->medidasDAO;
     }
 
+    public function getUsuarioDAO() {
+        if (!$this->usuarioDAO) {
+            $sm = $this->getServiceLocator();
+            $this->usuarioDAO = $sm->get('Administracion\Modelo\DAO\UsuarioDAO');
+        }
+        return $this->usuarioDAO;
+    }
+
     function getFormulario($action = '', $onsubmit = '', $idMedidas = 0) {
         $required = true;
         if ($action == 'detail') {
@@ -36,7 +44,7 @@ class MedidasController extends AbstractActionController {
         $usuarios = $this->getUsuarioDAO()->getUsuarios();
         $usuariosSelect = array();
         foreach ($usuarios as $usu) {
-            $usuariosSelect[$usu->getPk_usuario_id()] = $usu->getNOM_USU();
+            $usuariosSelect[$usu['usuarioOBJ']->getPk_usuario_id()] = $usu['usuarioOBJ']->getNombreApellido();
         }
         $form = new MedidasForm($action, $onsubmit, $required, $usuariosSelect);
         if ($idMedidas != 0) {
@@ -44,14 +52,6 @@ class MedidasController extends AbstractActionController {
             $form->bind($medidasOBJ);
         }
         return $form;
-    }
-
-    public function getUsuarioDAO() {
-        if (!$this->usuarioDAO) {
-            $sm = $this->getServiceLocator();
-            $this->usuarioDAO = $sm->get('Administracion\Modelo\DAO\UsuarioDAO');
-        }
-        return $this->usuarioDAO;
     }
 
 //------------------------------------------------------------------------------

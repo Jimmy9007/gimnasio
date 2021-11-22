@@ -56,7 +56,7 @@ class UsuarioRutinasController extends AbstractActionController {
         $usuarios = $this->getUsuarioDAO()->getUsuarios();
         $usuariosSelect = array();
         foreach ($usuarios as $usu) {
-            $usuariosSelect[$usu->getPk_usuario_id()] = $usu->getNOM_USU();
+            $usuariosSelect[$usu['usuarioOBJ']->getPk_usuario_id()] = $usu['usuarioOBJ']->getNombreApellido();
         }
         $form = new UsuarioRutinasForm($action, $onsubmit, $required, $usuariosSelect);
         if ($idUsuarioRutinas != 0) {
@@ -93,15 +93,16 @@ class UsuarioRutinasController extends AbstractActionController {
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
-            if ($form->isValid()) {                
-                $this->getUsuarioRutinasDAO()->guardarUsuarioRutina();
+            if ($form->isValid()) {
+                $rutinasOBJ = new UsuarioRutinas($form->getData());
+                $this->getUsuarioRutinasDAO()->guardarUsuarioRutina($rutinasOBJ);
                 return $this->redirect()->toRoute('administracion/default', array(
                             'controller' => 'usuariorutinas',
                             'action' => 'index',
                 ));
             } else {
                 return $this->redirect()->toRoute('administracion/default', array(
-                            'controller' => 'usuario-rutinas',
+                            'controller' => 'usuariorutinas',
                             'action' => 'index',
                 ));
             }

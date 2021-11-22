@@ -1,5 +1,24 @@
+function bloqueoAjax() {
+    $.blockUI(
+            {
+                message: $('#msgBloqueo'),
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: .85,
+                    color: '#fff',
+                    'z-index': 10000
+                }
+            }
+    );
+    $('.blockOverlay').attr('style', $('.blockOverlay').attr('style') + 'z-index: 1100 !important');
+}
 function verAgregarAsistencia() {
     $.get('/gimnasio/administracion/asistencia/add', {}, setFormulario);
+    bloqueoAjax();
 }
 function verDetalle(idAsistencia) {
     $.get('/gimnasio/administracion/asistencia/detail', {idAsistencia: idAsistencia}, setFormulario);
@@ -72,6 +91,7 @@ function setSeleccionarUsuarios(datos) {
 
 function selectUsuario(idUsuario) {
     $("#fk_usuario_id").val(idUsuario);
+    $.get('/gimnasio/administracion/asistencia/mensaje', {idUsuario: idUsuario}, );
 }
 function detalleAsistencia(idAsistencia) {
     $.post('/gimnasio/administracion/asistencia/getDetalleAsistencia', {idAsistencia: idAsistencia}, getDetalleAsistencia);

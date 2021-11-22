@@ -9,6 +9,7 @@ use Zend\Db\Sql\Select;
 use Administracion\Modelo\Entidades\Mensualidad;
 use Administracion\Modelo\Entidades\Usuario;
 use Administracion\Modelo\Entidades\ReporteMensualidad;
+use Administracion\Modelo\Entidades\Clienteempleado;
 
 class MensualidadDAO extends AbstractTableGateway {
 
@@ -34,11 +35,16 @@ class MensualidadDAO extends AbstractTableGateway {
         ));
         $select->join('usuario', 'usuario.pk_usuario_id = mensualidad.fk_usuario_id', array(
             'pk_usuario_id',
-            'NOM_USU',
-            'APELL_USU',
-            'SEXO',
-            'IDENTIFICACION',
-            'FECHA_NAC_USU',
+            'fk_clienteempleado_id',
+            'nombreApellido',
+            'genero',
+        ));
+        $select->join('clienteempleado', 'clienteempleado.pk_clienteempleado_id = usuario.fk_clienteempleado_id', array(
+            'pk_clienteempleado_id',
+            'nombre',
+            'apellido',
+            'identificacion',
+            'genero',
         ));
         if ($filtro != '') {
             $select->where($filtro);
@@ -49,6 +55,7 @@ class MensualidadDAO extends AbstractTableGateway {
             $mensualidadUsuario = array(
                 'usuarioOBJ' => new Usuario($dato),
                 'mensualidadOBJ' => new Mensualidad($dato),
+                'clienteempleadoOBJ' => new Clienteempleado($dato),
                 'diasPreaviso' => $dato['diasPreaviso'],
                 'enivarPreaviso' => $dato['enivarPreaviso'],
             );
@@ -58,6 +65,55 @@ class MensualidadDAO extends AbstractTableGateway {
     }
 
     public function getReporteMensualidad($filtro = '') {
+        $ReporteMensualidad = array();
+        $select = new Select($this->table2);
+        $select->columns(array(
+            'pk_reporte_id',
+            'fechaReporte',
+            'fechaFinReporte',
+            'valorReporte',
+            'fk_mensualidad_id',
+        ));
+        $select->join('mensualidad', 'mensualidad.pk_mensualidad_id = reportemensualidad.fk_mensualidad_id', array(
+            'pk_mensualidad_id',
+            'FECHA_MENS',
+            'FECHA_MENS_FIN',
+            'valor',
+            'fechaUltPreaviso',
+            'fk_usuario_id',
+        ));
+        $select->join('usuario', 'usuario.pk_usuario_id = mensualidad.fk_usuario_id', array(
+            'pk_usuario_id',
+            'fk_clienteempleado_id',
+            'nombreApellido',
+            'genero',
+        ));
+        $select->join('clienteempleado', 'clienteempleado.pk_clienteempleado_id = usuario.fk_clienteempleado_id', array(
+            'pk_clienteempleado_id',
+            'nombre',
+            'apellido',
+            'identificacion',
+            'genero',
+        ));
+
+        if ($filtro != '') {
+            $select->where($filtro);
+        }
+//        print $select->getSqlString();
+        $datos = $this->selectWith($select)->toArray();
+        foreach ($datos as $dato) {
+            $ReporteMensual = array(
+                'usuarioOBJ' => new Usuario($dato),
+                'clienteempleadoOBJ' => new Clienteempleado($dato),
+                'mensualidadOBJ' => new Mensualidad($dato),
+                'reporteOBJ' => new ReporteMensualidad($dato),
+            );
+            $ReporteMensualidad[] = $ReporteMensual;
+        }
+        return $ReporteMensualidad;
+    }
+
+    public function getReporteMensualidad2($filtro = '') {
         $ReporteMensualidad = array();
         $select = new Select($this->table2);
         $select->columns(array(
@@ -77,11 +133,17 @@ class MensualidadDAO extends AbstractTableGateway {
             'fechaUltPreaviso',
         ));
         $select->join('usuario', 'usuario.pk_usuario_id = mensualidad.fk_usuario_id', array(
-            'NOM_USU',
-            'APELL_USU',
-            'SEXO',
-            'IDENTIFICACION',
-            'FECHA_NAC_USU',
+            'pk_usuario_id',
+            'fk_clienteempleado_id',
+            'nombreApellido',
+            'genero',
+        ));
+        $select->join('clienteempleado', 'clienteempleado.pk_clienteempleado_id = usuario.fk_clienteempleado_id', array(
+            'pk_clienteempleado_id',
+            'nombre',
+            'apellido',
+            'identificacion',
+            'genero',
         ));
         if ($filtro != '') {
             $select->where($filtro);
@@ -92,6 +154,7 @@ class MensualidadDAO extends AbstractTableGateway {
             $ReporteMensual = array(
                 'reporteOBJ' => new ReporteMensualidad($dato),
                 'usuarioOBJ' => new Usuario($dato),
+                'clienteempleadoOBJ' => new Clienteempleado($dato),
                 'mensualidadOBJ' => new Mensualidad($dato),
                 'mes' => $dato['mes'],
             );
@@ -114,11 +177,9 @@ class MensualidadDAO extends AbstractTableGateway {
             'fechaUltPreaviso',
         ));
         $select->join('usuario', 'usuario.pk_usuario_id = mensualidad.fk_usuario_id', array(
-            'NOM_USU',
-            'APELL_USU',
-            'SEXO',
-            'IDENTIFICACION',
-            'FECHA_NAC_USU',
+            'pk_usuario_id',
+            'nombreApellido',
+            'genero',
         ))->where(array('pk_usuario_id' => $filtro));
         if ($filtro != '') {
             $select->where($filtro);
@@ -166,6 +227,29 @@ class MensualidadDAO extends AbstractTableGateway {
 
     public function setFechaUltPreaviso($idMensualidad = 0) {
         return $this->update(array('fechaUltPreaviso' => date('Y-m-d H:i:s')), array('pk_mensualidad_id' => (int) $idMensualidad));
+    }
+
+//------------------------------------------------------------------------------
+    public function getTotalMensualidadByFechas($fechaini = '0000-00-00', $fechafin = '0000-00-00') {
+        $this->table = 'reportemensualidad';
+        $select = array();
+        $select = new Select($this->table);
+        $select->columns(array(
+            'total' => new Expression('SUM(valorReporte)'),
+        ))->where("DATE(fechaReporte) >= '$fechaini' AND DATE(fechaReporte) < '$fechafin'");
+        $datos = $this->selectWith($select)->toArray();
+        return $datos[0]['total'];
+    }
+
+    public function getTotalVentaByFechas($fechaini = '0000-00-00', $fechafin = '0000-00-00') {
+        $this->table = 'venta';
+        $select = array();
+        $select = new Select($this->table);
+        $select->columns(array(
+            'total' => new Expression('SUM(valorTotal)'),
+        ))->where("DATE(fechaVenta) >= '$fechaini' AND DATE(fechaVenta) < '$fechafin'");
+        $datos = $this->selectWith($select)->toArray();
+        return $datos[0]['total'];
     }
 
 }

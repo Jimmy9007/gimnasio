@@ -1,14 +1,14 @@
 <?php
 if (defined('RUNNING_FROM_ROOT')) {
-    $this->plugin('basePath')->setBasePath($this->basePath() . '/public');
+    $this->plugin('basePath')->setBasePath($this->basePath() . '/');
 }
 
 $nombreUsuario = 'SESION NO INICIADA';
-$tipoUsuario = 'Usuario';
+$tipoUsuario = '2';
 if ($sesionUsuario = $this->identity()) {
-    $nombreUsuario = $this->escapeHtml($sesionUsuario->NOM_USU) . ' ' . $this->escapeHtml($sesionUsuario->APELL_USU);
-    $tipoUsuario = $this->escapeHtml($sesionUsuario->TIPO_USUARIO);
-    $sexo = $this->escapeHtml($sesionUsuario->SEXO);
+    $nombreUsuario = $this->escapeHtml($sesionUsuario->nombreApellido);
+    $tipoUsuario = $this->escapeHtml($sesionUsuario->fk_rol_id);
+    $sexo = $this->escapeHtml($sesionUsuario->genero);
     if ($sexo == 'Masculino') {
         $ao = 'o';
     } else {
@@ -25,15 +25,15 @@ echo $this->doctype();
         echo $this->headTitle('.:: POPGYM ::. ')->setSeparator(' - ')->setAutoEscape(false);
         echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0')->appendHttpEquiv('X-UA-Compatible', 'IE=edge');
         echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
-                ->prependStylesheet($this->basePath('css/custom.css'))
-                ->prependStylesheet($this->basePath('css/font-awesome.min.css'))
-                ->prependStylesheet($this->basePath('css/bootstrap.min.css'));
+                ->prependStylesheet($this->basePath('build/css/custom.css'))
+                ->prependStylesheet($this->basePath('vendors/font-awesome/css/font-awesome.min.css'))
+                ->prependStylesheet($this->basePath('vendors/bootstrap/dist/css/bootstrap.min.css'));
         echo $this->headScript()
-                ->prependFile($this->basePath('js/jquery.smartWizard.js'))
-                ->prependFile($this->basePath('js/nprogress.js'))
-                ->prependFile($this->basePath('js/fastclick.js'))
-                ->prependFile($this->basePath('js/bootstrap.min.js'))
-                ->prependFile($this->basePath('js/jquery.min.js'))
+                ->prependFile($this->basePath('vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js'))
+                ->prependFile($this->basePath('vendors/nprogress/nprogress.js'))
+                ->prependFile($this->basePath('vendors/fastclick/lib/fastclick.js'))
+                ->prependFile($this->basePath('vendors/bootstrap/dist/js/bootstrap.min.js'))
+                ->prependFile($this->basePath('vendors/jquery/dist/jquery.min.js'))
                 ->prependFile($this->basePath('js/respond.min.js'), 'text/javascript', array('conditional' => 'lt IE 9',))
                 ->prependFile($this->basePath('js/html5shiv.min.js'), 'text/javascript', array('conditional' => 'lt IE 9',));
         ?>
@@ -43,12 +43,14 @@ echo $this->doctype();
             <div class="main_container">
                 <?php echo $this->header; ?>
                 <?php
-                if ($tipoUsuario == 'Administrador') {
+                if ($tipoUsuario == '1') {
                     echo $this->menuadmin;
-                } else if ($tipoUsuario == 'Cliente') {
+                } else if ($tipoUsuario == '2') {
                     echo $this->menu;
-                } else if ($tipoUsuario == 'Asistencia'){
-                    echo $this->menuasistencia;
+                } else if ($tipoUsuario == '3') {
+                    echo $this->menuempleado;
+                } else if ($tipoUsuario == '4') {
+                    echo $this->menuinstructor;
                 }
                 ?>
                 <div class="right_col" role="main">
@@ -60,6 +62,20 @@ echo $this->doctype();
                 <?php echo $this->footer; ?>
             </div>
         </div>
-        <script src="/gimnasio/public/js/custom.js"></script>
+        <!-- Custom Theme Scripts -->
+        <script src="/gimnasio/public/build/js/custom.js"></script>
+        <script>
+//----------------------------fullscreen----------------------------------------
+            var elem = document.documentElement;
+            function openFullscreen() {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                }
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+//------------------------------------------------------------------------------ 
+        </script>
     </body>
 </html>

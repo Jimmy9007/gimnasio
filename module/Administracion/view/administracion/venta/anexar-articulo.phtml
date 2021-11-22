@@ -1,47 +1,98 @@
 <?php
+//--------- CARGAR MENSAJES DE ALERTA ------------------------------------------
+//$formBusquedas = $this->formBusquedas;
+$flash = $this->flashMessenger();
+$notificaciones = [
+    'success' => array_merge($flash->getSuccessMessages(), $flash->getCurrentSuccessMessages()),
+    'error' => array_merge($flash->getErrorMessages(), $flash->getCurrentErrorMessages()),
+    'alert' => array_merge($flash->getMessages(), $flash->getCurrentMessages()),
+    'information' => array_merge($flash->getInfoMessages(), $flash->getCurrentInfoMessages()),
+    'warning' => array_merge($flash->getWarningMessages(), $flash->getCurrentWarningMessages()),
+];
+$flash->clearCurrentMessages('default');
+$flash->clearCurrentMessages('info');
+$flash->clearCurrentMessages('success');
+$flash->clearCurrentMessages('warning');
+$flash->clearCurrentMessages('error');
+$mensaje = 'VENTAS';
+$tipo = 'info';
+foreach (array_filter($notificaciones) as $tipo => $mensajes) {
+    foreach ($mensajes as $mensaje) {
+        
+    }
+}
+//------------------------------------------------------------------------------
 $title = 'Ventas';
 $this->headTitle($title);
-$this->headLink()->prependStylesheet($this->basePath('/public/css/dataTables.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/buttons.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/responsive.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/scroller.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/green.css'));
+$this->headLink()->prependStylesheet($this->basePath('vendors/datatables.net-bs/css/dataTables.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/iCheck/skins/flat/green.css'))
+        ->prependStylesheet($this->basePath('vendors/pnotify/dist/pnotify.css'))
+        ->prependStylesheet($this->basePath('vendors/pnotify/dist/pnotify.buttons.css'))
+        ->prependStylesheet($this->basePath('vendors/pnotify/dist/pnotify.nonblock.css'))
+        ->prependStylesheet($this->basePath('/public/css/sweetalert2.min.css'));
 
-$this->headScript()->prependScript('$(document).ready(function() {'
-                . '$("#tblVentas").DataTable({'
-                . 'responsive: true,'
-                . '"iDisplayLength": 25,
-                    "sPaginationType": "full_numbers",
-                    "oLanguage": {
-                        "sLengthMenu": "Mostrar: _MENU_ registros por pagina",
-                        "sZeroRecords": "NO SE HA ENCONTRADO INFORMACION",
-                        "sInfo": "Mostrando <b>_START_</b> a <b>_END_</b> registros <br>TOTAL REGISTROS: <b>_TOTAL_</b> Registros</b>",
-                        "sInfoEmpty": "Mostrando 0 A 0 registros",
-                        "sInfoFiltered": "(Filtrados de un total de <b>_MAX_</b> registros)",
-                        "sLoadingRecords": "CARGANDO...",
-                        "sProcessing": "EN PROCESO...",
-                        "sSearch": "Buscar:",
-                        "sEmptyTable": "NO HAY INFORMACION DISPONIBLE PARA LA TABLA",
-                        "oPaginate": {
-                            "sFirst": "Inicio",
-                            "sLast": "Fin",
-                            "sNext": "Siguiente",
-                            "sPrevious": "Anterior"
-                        }
-                    },
-                    "aaSorting": [[0, "des"]]'
-                . '});'
-                . '});'
-                , 'text/javascript'
-                , array('noescape' => true))
-        ->prependFile('/gimnasio/public/js/sistema/venta.js')
-        ->prependFile('/gimnasio/public/js/datatables.scroller.min.js')
-        ->prependFile('/gimnasio/public/js/responsive.bootstrap.js')
-        ->prependFile('/gimnasio/public/js/dataTables.responsive.min.js')
-        ->prependFile('/gimnasio/public/js/buttons.bootstrap.min.js')
-        ->prependFile('/gimnasio/public/js/dataTables.buttons.min.js')
-        ->prependFile('/gimnasio/public/js/dataTables.bootstrap.min.js')
-        ->prependFile('/gimnasio/public/js/jquery.dataTables.min.js');
+$this->headScript()->prependScript('
+                $(document).ajaxStop($.unblockUI); 
+                $(document).ready(function() {
+                     $("#tblVentas").DataTable({
+                        "responsive": "true",
+                        "iDisplayLength": 25,
+                        "sPaginationType": "full_numbers",
+                        "oLanguage": {
+                            "sLengthMenu": "Mostrar: _MENU_ registros por pagina",
+                            "sZeroRecords": "NO SE HA ENCONTRADO INFORMACION",
+                            "sInfo": "Mostrando <b>_START_</b> a <b>_END_</b> registros <br>TOTAL REGISTROS: <b>_TOTAL_</b> Registros</b>",
+                            "sInfoEmpty": "Mostrando 0 A 0 registros",
+                            "sInfoFiltered": "(Filtrados de un total de <b>_MAX_</b> registros)",
+                            "sLoadingRecords": "CARGANDO...",
+                            "sProcessing": "EN PROCESO...",
+                            "sSearch": "Buscar:",
+                            "sEmptyTable": "NO HAY INFORMACION DISPONIBLE PARA LA TABLA",
+                            "oPaginate": {
+                                "sFirst": "Inicio",
+                                "sLast": "Fin",
+                                "sNext": "Siguiente",
+                                "sPrevious": "Anterior"
+                            }
+                        },
+                        "aaSorting": [[0, "asc"]]
+                });
+                    //------------------------------------------------------------------------------
+                    // MANIPULACION DEL EVENTO DE CIERRE DEL MODAL
+                    //------------------------------------------------------------------------------
+                    $("#modalFormulario").on("hide.bs.modal", function (e) {
+                        return confirmarCerrar();
+                    }); 
+                    new PNotify({
+                     title: "<br>SPARTANS<br>",
+                     text: "' . $mensaje . '",
+                     type: "' . $tipo . '",
+                     styling: "bootstrap3"
+                    });
+                });', 'text/javascript', array('noescape' => true))
+        ->prependFile($this->basePath('js/sistema/venta.js'))
+        ->prependFile($this->basePath('js/jquery.blockUI.js'))
+        ->prependFile($this->basePath('vendors/iCheck/icheck.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-scroller/js/dataTables.scroller.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-responsive/js/dataTables.responsive.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/dataTables.buttons.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/buttons.html5.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/buttons.print.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-keytable/js/dataTables.keyTable.min.js'))
+        ->prependFile($this->basePath('vendors/pdfmake/build/pdfmake.min.js'))
+        ->prependFile($this->basePath('vendors/pdfmake/build/vfs_fonts.js'))
+        ->prependFile($this->basePath('js/SwtSistema.js'))
+        ->prependFile($this->basePath('js/sweetalert2.all.min2021.js'))
+        ->prependFile($this->basePath('vendors/datatables.net/js/jquery.dataTables.min.js'))
+        ->prependFile($this->basePath('vendors/pnotify/dist/pnotify.js'));
 $formVenta = $this->form;
 ?>
 <div class="clearfix"></div>
@@ -54,7 +105,7 @@ $formVenta = $this->form;
                 <ul class="nav navbar-right panel_toolbox">
                     <li>    
                         <div class="form-group">                      
-                            <button type="button" onclick="seleccionarProducto2(<?php echo $formVenta->get('pk_venta_id')->getValue(); ?>)" class="btn btn-info"><i class="fa fa-search"></i> Anexar Producto</button>
+                            <button type="button" onclick="seleccionarProducto(<?php echo $formVenta->get('pk_venta_id')->getValue(); ?>)" class="btn btn-info"><i class="fa fa-search"></i> Anexar Producto</button>
                         </div>
                     </li>
                 </ul>
@@ -83,7 +134,7 @@ $formVenta = $this->form;
                             echo '<td>$ ' . number_format($productos['productoOBJ']->getPrecioVenta()) . '</td>';
                             echo '<td>$ ' . number_format($productos['productoVentaOBJ']->getMonto()) . '</td>';
                             echo '<td>';
-                            echo '<a href="#"return false;" title="Eliminar esta Venta"><i class="fa fa-close"></i></a>';
+                            echo '<a href="javascript:eliminarArticulo(' . $productos['productoVentaOBJ']->getPk_venta_id() . ',' . $productos['productoVentaOBJ']->getPk_producto_id() . ')" title="ELIMINAR PRODUCTO"><i class="fa fa-close"></i></a>';
                             echo '</td>';
                             echo '</tr>';
                         }
@@ -163,3 +214,9 @@ $formVenta = $this->form;
         </div>
     </div>
 </div>
+<div id="msgBloqueo" style="display: none;"> 
+    SU SOLICITUD ESTA SIENDO PROCESADA, POR FAVOR ESPERE <i class="fa fa-spinner fa-spin fa-lg"></i>
+</div>
+<!-- PNotify -->
+<script src="<?php echo $this->basePath('vendors/pnotify/dist/pnotify.buttons.js'); ?>"></script>
+<script src="<?php echo $this->basePath('vendors/pnotify/dist/pnotify.nonblock.js'); ?>"></script>

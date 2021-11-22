@@ -8,6 +8,7 @@ use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 use Administracion\Modelo\Entidades\Medidas;
 use Administracion\Modelo\Entidades\Usuario;
+use Administracion\Modelo\Entidades\Clienteempleado;
 
 class MedidasDAO extends AbstractTableGateway {
 
@@ -31,10 +32,16 @@ class MedidasDAO extends AbstractTableGateway {
         ));
         $select->join('usuario', 'usuario.pk_usuario_id = medidas.fk_usuario_id', array(
             'pk_usuario_id',
-            'NOM_USU',
-            'APELL_USU',
-            'FECHA_NAC_USU',
-            'SEXO',
+            'fk_clienteempleado_id',
+            'nombreApellido',
+            'genero',
+        ));
+        $select->join('clienteempleado', 'clienteempleado.pk_clienteempleado_id = usuario.fk_clienteempleado_id', array(
+            'pk_clienteempleado_id',
+            'identificacion',
+            'nombre',
+            'apellido',
+            'genero',
         ));
 
         if ($filtro != '') {
@@ -45,6 +52,7 @@ class MedidasDAO extends AbstractTableGateway {
         foreach ($datos as $dato) {
             $medidasUsuario = array(
                 'usuarioOBJ' => new Usuario($dato),
+                'clienteempleadoOBJ' => new Clienteempleado($dato),
                 'medidasOBJ' => new Medidas($dato),
             );
             $medidass[] = $medidasUsuario;
@@ -85,10 +93,8 @@ class MedidasDAO extends AbstractTableGateway {
         ));
         $select->join('usuario', 'usuario.pk_usuario_id = medidas.fk_usuario_id', array(
             'pk_usuario_id',
-            'NOM_USU',
-            'APELL_USU',
-            'FECHA_NAC_USU',
-            'SEXO',
+            'nombreApellido',
+            'genero',
         ))->where(array('pk_usuario_id' => $filtro));
 
         if ($filtro != '') {

@@ -2,12 +2,10 @@
 $nombreUsuario = 'SESION NO INICIADA';
 $tipoUsuario = 'Usuario';
 if ($sesionUsuario = $this->identity()) {
-    $nombreUsuario = $this->escapeHtml($sesionUsuario->NOM_USU) . ' ' . $this->escapeHtml($sesionUsuario->APELL_USU);
-    $tipoUsuario = $this->escapeHtml($sesionUsuario->TIPO_USUARIO);
-    $sexo = $this->escapeHtml($sesionUsuario->SEXO);
-    $fecha = $this->escapeHtml($sesionUsuario->FECHA_NAC_USU);
-    $dia = date("d", strtotime($fecha));
-    $mes = date("m", strtotime($fecha));
+    $nombreUsuario = $this->escapeHtml($sesionUsuario->nombreApellido);
+    $tipoUsuario = $this->escapeHtml($sesionUsuario->fk_rol_id);
+    $foto = $this->escapeHtml($sesionUsuario->rutaFotoPerfil);
+    $sexo = $this->escapeHtml($sesionUsuario->genero);
 
     if ($sexo == 'Masculino') {
         $ao = 'o';
@@ -18,51 +16,22 @@ if ($sesionUsuario = $this->identity()) {
 ?>
 <div class="col-md-3 left_col">
     <div class="left_col scroll-view">
-
-        <div class="navbar nav_title" style="border: 0;">
-            <img src="/gimnasio/public/img/gimnasio.jpg" style="width: 60%" alt="Gimnasio"/>
-            <div class="ln_solid"></div>
+        <div class="navbar nav_title user-profile" style="border: 0;">
+            <a href="#" class="site_title"><img src="/gimnasio/public/img/gimnasio1.jpg" alt="gimnasio"/> 
+                <span>POPGYM</span></a>
         </div>
+
+        <div class="clearfix"></div>
+
+ <!--<div style="text-align:center;padding:1em 0;"> <h6><a style="text-decoration:none;" href="https://www.zeitverschiebung.net/es/timezone/america--bogota"></a></h6> <iframe src="https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=es&size=medium&timezone=America%2FBogota" width="100%" height="115" frameborder="0" seamless></iframe> </div>-->
+
         <div class="profile"><!--img_2 -->
             <div class="profile_pic">
-                <?php
-                if ($sexo == 'Masculino') {
-                    echo '<img src="/gimnasio/public/img/profile/perfilHombre.png" alt="" class="img-circle profile_img">';
-                } else {
-                    echo '<img src="/gimnasio/public/img/profile/perfilMujer.png" alt="" class="img-circle profile_img">';
-                }
-                ?>
+                <img src="/gimnasio/public/img/profile/<?php echo $foto; ?>" alt="..." class="img-circle profile_img">
             </div>
             <div class="profile_info">
                 <span>Bienvenid<?php echo $ao; ?>,</span>
                 <h2><?php echo $nombreUsuario; ?></h2>
-                <?php
-                if (($dia >= 22 && $mes == 12) || ($dia <= 19 && $mes == 1)) {
-                    echo '<img src="/gimnasio/public/img/signos/capricornio.png" width="30%" height="30%" align="right">';
-                } else if (($dia >= 20 && $mes == 1) || ($dia <= 18 && $mes == 2)) {
-                    echo '<img src="/gimnasio/public/img/signos/acuario.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 19 && $mes == 2) || ($dia <= 20 && $mes == 3)) {
-                    echo '<img src="/gimnasio/public/img/signos/piscis.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 21 && $mes == 3) || ($dia <= 19 && $mes == 4)) {
-                    echo '<img src="/gimnasio/public/img/signos/aries.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 20 && $mes == 4) || ($dia <= 20 && $mes == 5)) {
-                    echo '<img src="/gimnasio/public/img/signos/tauro.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 21 && $mes == 5) || ($dia <= 20 && $mes == 6)) {
-                    echo '<img src="/gimnasio/public/img/signos/geminis.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 21 && $mes == 6) || ($dia <= 22 && $mes == 7)) {
-                    echo '<img src="/gimnasio/public/img/signos/cancer.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 23 && $mes == 7) || ($dia <= 22 && $mes == 8)) {
-                    echo '<img src="/gimnasio/public/img/signos/leo.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 23 && $mes == 8) || ($dia <= 22 && $mes == 9)) {
-                    echo '<img src="/gimnasio/public/img/signos/virgo.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 23 && $mes == 9) || ($dia <= 22 && $mes == 10)) {
-                    echo '<img src="/gimnasio/public/img/signos/libra.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 23 && $mes == 10) || ($dia <= 21 && $mes == 11)) {
-                    echo '<img src="/gimnasio/public/img/signos/escorpion.png"width="30%" height="30%" align="right">';
-                } else if (($dia >= 22 && $mes == 11) || ($dia <= 21 && $mes == 12)) {
-                    echo '<img src="/gimnasio/public/img/signos/sagitario.png"width="30%" height="30%" align="right">';
-                }
-                ?>
             </div>
         </div>
         <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
@@ -71,24 +40,16 @@ if ($sesionUsuario = $this->identity()) {
                     <h3>Menu General</h3>
                     <li>
                         <a href="<?php echo $this->url('administracion/default', array('controller' => 'index', 'action' => 'index')) ?>"><img src="/gimnasio/public/img/iconos/home.png"width="30" height="30"> INICIO</a>
-                    </li>                   
+                    </li>                     
                     <li>
                         <a href="<?php echo $this->url('administracion/default', array('controller' => 'medidas', 'action' => 'indexMedidasUsuario')) ?>"><img src="/gimnasio/public/img/iconos/medidas.png"width="30" height="30"> Mis Medidas</a>
                     </li>
                     <li>
                         <a href="<?php echo $this->url('administracion/default', array('controller' => 'rutinas', 'action' => 'indexRutinaUsuario')) ?>"><img src="/gimnasio/public/img/iconos/rutinas.png"width="30" height="30"> Mis Rutinas</a>
                     </li> 
-                    <li><a><img src="/gimnasio/public/img/iconos/mensualidad.png"width="25" height="25"> Mensualidad <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                            <li>
-                                <a href="<?php echo $this->url('administracion/default', array('controller' => 'mensualidad', 'action' => 'indexMensualidadUsuario')) ?>"><i class="fa fa-eye"></i>Ver Mis Mensualidades</a>
-                            </li>
-                            <li>
-                                <a href="<?php echo $this->url('administracion/default', array('controller' => 'mensualidad', 'action' => 'indexMensualidadUsuario')) ?>"><i class="fa fa-cc-visa"></i>Pagar Mi Mensuialidad</a>
-                            </li>
-                        </ul>
-                    </li>
-
+                    <li>
+                        <a href="<?php echo $this->url('administracion/default', array('controller' => 'mensualidad', 'action' => 'indexMensualidadUsuario')) ?>"><img src="/gimnasio/public/img/iconos/mensualidad.png"width="30" height="30"> Mi Mensualidad</a>
+                    </li>                   
                 </ul>
             </div>
         </div>
@@ -109,11 +70,3 @@ if ($sesionUsuario = $this->identity()) {
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-

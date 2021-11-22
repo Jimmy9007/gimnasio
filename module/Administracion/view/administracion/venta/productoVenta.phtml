@@ -1,0 +1,57 @@
+<h1>FACTURA DE VENTA</h1>
+<table border="1" cellpadding="2" cellspacing="2">
+    <thead>
+        <tr style="background-color:#AAA;color:#FFFF00;">
+            <!--<td width="140" align="center"><b>IMAGEN</b></td>-->
+            <td width="140" align="center"><b>DETALLE</b></td>
+            <td width="140" align="center"><b>TOTAL</b></td>
+
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($this->productoVenta as $venta) {
+            echo '<tr>';
+//            echo '<td width="140" align="center"> <img src="../gimnasio/public/img/productos/' . $venta['productoOBJ']->getImagenProducto() . '" width="50" height="50"> </td>';
+            echo '<td width="140" align="center">' . $venta['productoOBJ']->getNombreProducto() . '<br>' .
+            $venta['productoVentaOBJ']->getCantidadVenta() . ' x ' . number_format($venta['productoOBJ']->getPrecioVenta()) . '</td>';
+            echo '<td width="140" align="center">' . number_format($venta['productoVentaOBJ']->getMonto()) . '</td>';
+            echo '</tr>';
+        }
+        ?>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="1" style=" border: inset 0pt" align="center">Total Parcial</td>                    
+            <?php
+            $totalParcial = 0;
+            foreach ($this->productoVenta as $suma) {
+                $totalParcial += $suma['productoVentaOBJ']->getMonto();
+                $totalIva = $totalParcial * 0.15;
+                $total = $totalParcial + $totalIva;
+            }
+            echo '<td width="140" align="center"><b>$ ' . number_format($totalParcial) . '</b></td>';
+            ?>
+        </tr>
+        <tr>
+            <td width="140" align="center">Impuesto 15,00%</td>                
+            <?php
+            echo '<td width="140" align="center">$ ' . number_format($totalIva) . '</td>';
+            ?>
+        </tr>
+        <tr>
+            <td width="140" align="center"><b>TOTAL</b></td>           
+            <?php
+            echo '<td width="140" align="center" style="background-color:#FFFF00;color:#0000FF;"><b>$ ' . number_format($total) . '</b></td>';
+            ?>
+        </tr>
+        <tr>
+            <td width="140" align="center">Efectivo</td>
+            <td width="140" align="center">$ 10.000</td>           
+        </tr>
+        <tr>
+            <td width="140" align="center">Cambio</td>
+            <td width="140" align="center">$ 2.180</td>           
+        </tr>
+    </tfoot>
+</table>

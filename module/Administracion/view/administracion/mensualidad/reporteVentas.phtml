@@ -1,0 +1,54 @@
+<?php
+$fI = $this->fechaI;
+$fF = $this->fechaF;
+?>
+<h1>Ventas</h1>
+<p>Reporte desde la fecha: <b><?php echo date("d/M/Y", strtotime($fI)); ?></b> hasta la fecha: <b><?php echo date("d/M/Y", strtotime($fF)); ?></b></p>
+<table id="tblReporte">
+    <thead>
+        <tr>
+            <td class="tdTitulo">ID</td>
+            <td class="tdTitulo">FECHA</td>
+            <td class="tdTitulo">NOMBRE</td>
+            <td class="tdTitulo">VALOR</td>
+            <td class="tdTitulo">CANTIDAD</td>
+            <td class="tdTitulo">MONTO</td>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($this->ventasPDF as $venta) {
+            echo '<tr>';
+            echo '<td>' . $venta['ventaOBJ']->getPk_venta_id() . '</td>';
+            echo '<td>' . $venta['ventaOBJ']->getFechaVenta() . '</td>';
+            echo '<td>' . $venta['productoOBJ']->getNombreProducto() . '</td>';
+            echo '<td>$ ' . number_format($venta['productoOBJ']->getPrecioVenta()) . '</td>';
+            echo '<td align="center">' . $venta['productoVentaOBJ']->getCantidadVenta() . '</td>';
+            echo '<td width="140" align="center">$ ' . number_format($venta['productoVentaOBJ']->getMonto()) . '</td>';
+            echo '</tr>';
+        }
+        ?>
+        <!--        
+                           
+                            $objActSheet->setCellValue('F' . $cont, $venta['productoVentaOBJ']->getMonto());
+        //                    $objActSheet->setCellValue('G' . $cont, $venta['ventaOBJ']->getGanancia());
+                            $objActSheet->setCellValue('H' . $cont, $venta['ventaOBJ']->getFechaVenta());-->
+    </tbody>
+    <tfoot>
+        <tr>
+            <td width="140" align="center"></td>
+            <td width="140" align="center"></td>
+            <td width="140" align="center"></td>
+            <td width="70" align="center"></td>
+            <td width="140" align="center"></td>
+            <?php
+            $total = 0;
+            foreach ($this->ventasPDF as $suma) {
+                $total += $suma['productoVentaOBJ']->getMonto();
+            }
+            echo '<td width="140" align="center" style="background-color:#FFFF00;color:#0000FF;"><b>$ ' . number_format($total) . '</b></td>';
+            ?>
+        </tr>
+    </tfoot>
+</table>
+

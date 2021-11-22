@@ -8,22 +8,14 @@ use Zend\InputFilter\InputFilterInterface;
 class Usuario implements InputFilterAwareInterface {
 
     private $pk_usuario_id;
-    private $NOM_USU;
-    private $APELL_USU;
-    private $IDENTIFICACION;
-    private $FECHA_NAC_USU;
-    private $ocupacion;
-    private $CORREO_USU;
-    private $TEL_USU;
-    private $DIR_USU;
-    private $LOGIN;
-    private $PASSWORD;
-    private $PASSWORDSEGURO;
-    private $ESTADO;
-    private $TIPO_USUARIO;
-    private $SEXO;
-    private $condicionFisica;
-    private $OBJETIVOS;
+    private $fk_clienteempleado_id;
+    private $fk_rol_id;
+    private $nombreApellido;
+    private $login;
+    private $password;
+    private $passwordseguro;
+    private $estado;
+    private $genero;
     private $rutaFotoPerfil;
 
     public function __construct(array $datos = null) {
@@ -55,73 +47,40 @@ class Usuario implements InputFilterAwareInterface {
     }
 
 //------------------------------------------------------------------------------
-
     function getPk_usuario_id() {
         return $this->pk_usuario_id;
     }
 
-    function getNOM_USU() {
-        return $this->NOM_USU;
+    function getFk_clienteempleado_id() {
+        return $this->fk_clienteempleado_id;
     }
 
-    function getAPELL_USU() {
-        return $this->APELL_USU;
+    function getFk_rol_id() {
+        return $this->fk_rol_id;
     }
 
-    function getIDENTIFICACION() {
-        return $this->IDENTIFICACION;
+    function getNombreApellido() {
+        return $this->nombreApellido;
     }
 
-    function getFECHA_NAC_USU() {
-        return $this->FECHA_NAC_USU;
+    function getLogin() {
+        return $this->login;
     }
 
-    function getOcupacion() {
-        return $this->ocupacion;
+    function getPassword() {
+        return $this->password;
     }
 
-    function getCORREO_USU() {
-        return $this->CORREO_USU;
+    function getPasswordseguro() {
+        return $this->passwordseguro;
     }
 
-    function getTEL_USU() {
-        return $this->TEL_USU;
+    function getEstado() {
+        return $this->estado;
     }
 
-    function getDIR_USU() {
-        return $this->DIR_USU;
-    }
-
-    function getLOGIN() {
-        return $this->LOGIN;
-    }
-
-    function getPASSWORD() {
-        return $this->PASSWORD;
-    }
-
-    function getPASSWORDSEGURO() {
-        return $this->PASSWORDSEGURO;
-    }
-
-    function getESTADO() {
-        return $this->ESTADO;
-    }
-
-    function getTIPO_USUARIO() {
-        return $this->TIPO_USUARIO;
-    }
-
-    function getSEXO() {
-        return $this->SEXO;
-    }
-
-    function getCondicionFisica() {
-        return $this->condicionFisica;
-    }
-
-    function getOBJETIVOS() {
-        return $this->OBJETIVOS;
+    function getGenero() {
+        return $this->genero;
     }
 
     function getRutaFotoPerfil() {
@@ -132,73 +91,40 @@ class Usuario implements InputFilterAwareInterface {
         $this->pk_usuario_id = $pk_usuario_id;
     }
 
-    function setNOM_USU($NOM_USU) {
-        $this->NOM_USU = $NOM_USU;
+    function setFk_clienteempleado_id($fk_clienteempleado_id) {
+        $this->fk_clienteempleado_id = $fk_clienteempleado_id;
     }
 
-    function setAPELL_USU($APELL_USU) {
-        $this->APELL_USU = $APELL_USU;
+    function setFk_rol_id($fk_rol_id) {
+        $this->fk_rol_id = $fk_rol_id;
     }
 
-    function setIDENTIFICACION($IDENTIFICACION) {
-        $this->IDENTIFICACION = $IDENTIFICACION;
+    function setNombreApellido($nombreApellido) {
+        $this->nombreApellido = $nombreApellido;
     }
 
-    function setFECHA_NAC_USU($FECHA_NAC_USU) {
-        $this->FECHA_NAC_USU = $FECHA_NAC_USU;
+    function setLogin($login) {
+        $this->login = $login;
     }
 
-    function setOcupacion($ocupacion) {
-        $this->ocupacion = $ocupacion;
+    function setPassword($password) {
+        $this->password = $password;
     }
 
-    function setCORREO_USU($CORREO_USU) {
-        $this->CORREO_USU = $CORREO_USU;
+    function setPasswordseguro($passwordseguro) {
+        $this->passwordseguro = $passwordseguro;
     }
 
-    function setTEL_USU($TEL_USU) {
-        $this->TEL_USU = $TEL_USU;
+    function setEstado($estado) {
+        $this->estado = $estado;
     }
 
-    function setDIR_USU($DIR_USU) {
-        $this->DIR_USU = $DIR_USU;
-    }
-
-    function setLOGIN($LOGIN) {
-        $this->LOGIN = $LOGIN;
-    }
-
-    function setPASSWORD($PASSWORD) {
-        $this->PASSWORD = $PASSWORD;
-    }
-
-    function setPASSWORDSEGURO($PASSWORDSEGURO) {
-        $this->PASSWORDSEGURO = $PASSWORDSEGURO;
-    }
-
-    function setESTADO($ESTADO) {
-        $this->ESTADO = $ESTADO;
-    }
-
-    function setTIPO_USUARIO($TIPO_USUARIO) {
-        $this->TIPO_USUARIO = $TIPO_USUARIO;
-    }
-
-    function setSEXO($SEXO) {
-        $this->SEXO = $SEXO;
-    }
-
-    function setCondicionFisica($condicionFisica) {
-        $this->condicionFisica = $condicionFisica;
-    }
-
-    function setOBJETIVOS($OBJETIVOS) {
-        $this->OBJETIVOS = $OBJETIVOS;
+    function setGenero($genero) {
+        $this->genero = $genero;
     }
 
     function setRutaFotoPerfil($rutaFotoPerfil) {
         $this->rutaFotoPerfil = $rutaFotoPerfil;
     }
-
 
 }

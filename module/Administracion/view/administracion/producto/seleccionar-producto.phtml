@@ -16,14 +16,24 @@
         <tbody>
             <?php
             foreach ($this->productos as $producto) {
+                $hidden = '';
+                $estiloCantidad = '';
+                if ($producto->getCantidad() <= 0) {
+                    $hidden = 'hidden';
+                    $estiloCantidad = 'style="background: #FAA"'; //Rojo
+                } elseif ($producto->getCantidad() <= 3 && $producto->getCantidad() > 0) {
+                    $estiloCantidad = 'style="background: #FFA"'; //Amarillo
+                } else {
+                    $estiloCantidad = 'style="background: #AFA"'; //verde
+                }
                 echo '<tr>';
                 echo '<td>' . $producto->getPk_producto_id() . '</td>';
                 echo '<td>' . $producto->getNombreProducto() . '</td>';
                 echo '<td>' . $producto->getDescripcion() . '</td>';
-                echo '<td>' . $producto->getCantidad() . '</td>';
-                echo '<td>' . number_format($producto->getPrecioVenta()) . '</td>';
+                echo '<td ' . $estiloCantidad . '>' . $producto->getCantidad() . '</td>';
+                echo '<td>$' . number_format($producto->getPrecioVenta()) . '</td>';
                 echo '<td>';
-                echo '<a href="" onclick="selectProducto(' . $producto->getPk_producto_id() . '); return false;" title="Seleccionar este Producto"><i class="fa fa-check"></i></a>';
+                echo '<a href="" onclick="selectProducto(' . $producto->getPk_producto_id() . '); return false;" title="Seleccionar este Producto"' . $hidden . '><i class="fa fa-check"></i></a>';
                 echo '</td>';
                 echo '</tr>';
             }

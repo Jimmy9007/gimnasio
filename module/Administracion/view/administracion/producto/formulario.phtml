@@ -4,7 +4,7 @@ $producto = $this->producto;
 $form->prepare();
 $hiddenInfoRegistro = '';
 $action = $form->getAttribute('action');
-if ($action == 'add') {
+if ($action == 'buscar') {
     $hiddenInfoRegistro = 'hidden';
 }
 echo $this->form()->openTag($form);
@@ -24,7 +24,7 @@ echo $this->form()->openTag($form);
 
                                     <li>
                                         <img id="foto" src="/gimnasio/public/img/productos/<?php
-                                        echo $producto->getImagen();
+                                        echo $producto->getImagenProducto();
                                         ?>" alt="..." class="img-circle profile_img">
                                     </li>
                                     <li>
@@ -41,7 +41,7 @@ echo $this->form()->openTag($form);
                                 <ul class="list-inline count2">
                                     <li>
                                         <h3 id="precioU">$ <?php
-                                            echo $producto->getPrecioVenta();
+                                            echo number_format($producto->getPrecioVenta());
                                             ?></h3>
                                         <span>PRECIO U. L.</span>
                                     </li>
@@ -94,8 +94,11 @@ echo $this->form()->openTag($form);
             </div>
             <div class="row">
                 <div class="animated flipInY col-lg-12 col-md-12 col-sm-6 col-xs-12">
-                    <button class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                    <input type="submit" class="btn btn-success" value="Guardar">
+                    <button class="btn btn-danger" data-dismiss="modal">Cerrar</button>                    
+                    <a class="btn btn-info" href="javascript:agregar(
+                       <?php echo $producto->getPk_producto_id(); ?>,
+                       '<?php echo $producto->getNombreProducto(); ?>',
+                       <?php echo $producto->getPrecioVenta(); ?>)"><i class="fa fa-plus-circle"></i> Agregar</a>
                 </div>
             </div>
         </div>

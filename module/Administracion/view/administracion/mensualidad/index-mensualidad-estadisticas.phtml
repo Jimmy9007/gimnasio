@@ -2,74 +2,448 @@
 $title = 'Estadisticas';
 $this->headTitle($title);
 $this->headScript()
+        ->prependFile('/gimnasio/public/js/sistema/reportes.js')
         ->prependFile('/gimnasio/public/js/highcharts.js')
         ->prependFile('/gimnasio/public/js/modules/exporting.js');
-
-$scriptGraficoReporte = "
-         $(function () {
-     $('#graficoBarras').highcharts({
-        chart: {
-            type: 'column'
-        },
-       title: {
-            text: 'MENSUALIDADES',
-            x: -20 //center
-        },
-        subtitle: {
-            text: 'POPGYM',
-            x: -20
-        },
-        xAxis: {
-            type: 'category',
-            labels: {
-                rotation: -45,
-                style: {
-                    fontSize: '13px',
-                    fontFamily: 'Verdana, sans-serif'
-                }
-            }
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Pesos ($)'
-            }
-        },
-        legend: {
-            enabled: false
-        },
-        tooltip: {
-            pointFormat: 'Pesos $: <b>{point.y:.1f} mensuales</b>'
-        },
-        series: [{
-            name: 'Population',
-            data: [
-                ";
-
-foreach ($this->reporteMensualidad as $reporte) {
-    $scriptGraficoReporte .= "[" . $reporte['mes'] . "," . $reporte['reporteOBJ']->getValorReporte() . "],";
-}
-$scriptGraficoReporte .= "
-            ],
-            dataLabels: {
-                enabled: true,
-                rotation: -90,
-                color: '#FFFFFF',
-                align: 'right',
-                format: '{point.y:.1f}', // one decimal
-                y: 10, // 10 pixels down from the top
-                style: {
-                    fontSize: '13px',
-                    fontFamily: 'Verdana, sans-serif'
-                }
-            }
-        }]
-    });
-});
-        ";
-$this->headScript()->appendScript($scriptGraficoReporte);
 ?>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><i class="fa fa-bar-chart fa-2x"></i> &nbsp; Mensualidad VS Ventas <small>ANUAL</small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="selectAnio"></label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <select id="selectAnio" class="form-control" onchange="ponerAnio();">
+                            <option value="">Seleccione..</option>
+                            <?php
+                            for ($i = 0; $i <= 10; $i++) {
+                                $anios = date('Y') - $i;
+                                if ($anios == $this->anio) {
+                                    echo '<option value="' . $anios . '" selected>' . $anios . '</option>';
+                                } else {
+                                    echo '<option value="' . $anios . '">' . $anios . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="ln_solid"></div>
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <canvas id="ventasChart"></canvas>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">       
+                        <div class="x_content1">
+                            <div id="ventasMoris" style="width:100%; height:280px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">                    
+                        <div class="x_content">
+                            <div id="VentasEchart" style="height:350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div id="graficoBarras" style="min-width: 300px; height: 400px; margin: 0 auto"></div>
+<script>
+    function charts2() {
+        var ctx = document.getElementById("ventasChart");
+        var mybarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                datasets: [{
+                        label: 'Mensualidades',
+                        backgroundColor: "#26B99A",
+                        data: [<?php echo $this->mensualidadenero . ',' . $this->mensualidadfebrero . ',' . $this->mensualidadmarzo . ',' . $this->mensualidadabril . ',' . $this->mensualidadmayo . ',' . $this->mensualidadjunio . ',' . $this->mensualidadjulio . ',' . $this->mensualidadagosto . ',' . $this->mensualidadseptiembre . ',' . $this->mensualidadoctubre . ',' . $this->mensualidadnoviembre . ',' . $this->mensualidaddiciembre; ?>]
+                    }, {
+                        label: 'Ventas',
+                        backgroundColor: "#03586A",
+                        data: [<?php echo $this->ventasenero . ',' . $this->ventasfebrero . ',' . $this->ventasmarzo . ',' . $this->ventasabril . ',' . $this->ventasmayo . ',' . $this->ventasjunio . ',' . $this->ventasjulio . ',' . $this->ventasagosto . ',' . $this->ventasseptiembre . ',' . $this->ventasoctubre . ',' . $this->ventasnoviembre . ',' . $this->ventasdiciembre; ?>]
+                    }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                }
+            }
+        });
+    }
+    function morris2() {
+        Morris.Bar({
+            element: 'ventasMoris',
+            data: [
+                {"period": "Enero", "mensualidad": <?php echo $this->mensualidadenero + 0 ?>, "ventas": <?php echo $this->ventasenero + 0 ?>},
+                {"period": "Febrero", "mensualidad": <?php echo $this->mensualidadfebrero + 0 ?>, "ventas": <?php echo $this->ventasfebrero + 0 ?>},
+                {"period": "Marzo", "mensualidad": <?php echo $this->mensualidadmarzo + 0 ?>, "ventas": <?php echo $this->ventasmarzo + 0 ?>},
+                {"period": "Abril", "mensualidad": <?php echo $this->mensualidadabril + 0 ?>, "ventas": <?php echo $this->ventasabril + 0 ?>},
+                {"period": "Mayo", "mensualidad": <?php echo $this->mensualidadmayo + 0 ?>, "ventas": <?php echo $this->ventasmayo + 0 ?>},
+                {"period": "Junio", "mensualidad": <?php echo $this->mensualidadjunio + 0 ?>, "ventas": <?php echo $this->ventasjunio + 0 ?>},
+                {"period": "Julio", "mensualidad": <?php echo $this->mensualidadjulio + 0 ?>, "ventas": <?php echo $this->ventasjulio + 0 ?>},
+                {"period": "Agosto", "mensualidad": <?php echo $this->mensualidadagosto + 0 ?>, "ventas": <?php echo $this->ventasagosto + 0 ?>},
+                {"period": "Septiembre", "mensualidad": <?php echo $this->mensualidadseptiembre + 0 ?>, "ventas": <?php echo $this->ventasseptiembre + 0 ?>},
+                {"period": "Octubre", "mensualidad": <?php echo $this->mensualidadoctubre + 0 ?>, "ventas": <?php echo $this->ventasoctubre + 0 ?>},
+                {"period": "Noviembre", "mensualidad": <?php echo $this->mensualidadnoviembre + 0 ?>, "ventas": <?php echo $this->ventasnoviembre + 0 ?>},
+                {"period": "Diciembre", "mensualidad": <?php echo $this->mensualidaddiciembre + 0 ?>, "ventas": <?php echo $this->ventasdiciembre + 0 ?>}
+            ],
+            xkey: 'period',
+            barColors: ['#26B99A', '#34495E', '#ACADAC', '#3498DB'],
+            ykeys: ['mensualidad', 'ventas'],
+            labels: ['Mensualidad', 'Ventas'],
+            hideHover: 'auto',
+            xLabelAngle: 60,
+            resize: true
+        });
+    }
+    function echarts2() {
+        var theme = {
+            color: [
+                '#26B99A', '#34495E', '#BDC3C7', '#3498DB',
+                '#9B59B6', '#8abb6f', '#759c6a', '#bfd3b7'
+            ],
+
+            title: {
+                itemGap: 8,
+                textStyle: {
+                    fontWeight: 'normal',
+                    color: '#408829'
+                }
+            },
+
+            dataRange: {
+                color: ['#1f610a', '#97b58d']
+            },
+
+            toolbox: {
+                color: ['#408829', '#408829', '#408829', '#408829']
+            },
+
+            tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                axisPointer: {
+                    type: 'line',
+                    lineStyle: {
+                        color: '#408829',
+                        type: 'dashed'
+                    },
+                    crossStyle: {
+                        color: '#408829'
+                    },
+                    shadowStyle: {
+                        color: 'rgba(200,200,200,0.3)'
+                    }
+                }
+            },
+
+            dataZoom: {
+                dataBackgroundColor: '#eee',
+                fillerColor: 'rgba(64,136,41,0.2)',
+                handleColor: '#408829'
+            },
+            grid: {
+                borderWidth: 0
+            },
+
+            categoryAxis: {
+                axisLine: {
+                    lineStyle: {
+                        color: '#408829'
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#eee']
+                    }
+                }
+            },
+
+            valueAxis: {
+                axisLine: {
+                    lineStyle: {
+                        color: '#408829'
+                    }
+                },
+                splitArea: {
+                    show: true,
+                    areaStyle: {
+                        color: ['rgba(250,250,250,0.1)', 'rgba(200,200,200,0.1)']
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#eee']
+                    }
+                }
+            },
+            timeline: {
+                lineStyle: {
+                    color: '#408829'
+                },
+                controlStyle: {
+                    normal: {color: '#408829'},
+                    emphasis: {color: '#408829'}
+                }
+            },
+
+            k: {
+                itemStyle: {
+                    normal: {
+                        color: '#68a54a',
+                        color0: '#a9cba2',
+                        lineStyle: {
+                            width: 1,
+                            color: '#408829',
+                            color0: '#86b379'
+                        }
+                    }
+                }
+            },
+            map: {
+                itemStyle: {
+                    normal: {
+                        areaStyle: {
+                            color: '#ddd'
+                        },
+                        label: {
+                            textStyle: {
+                                color: '#c12e34'
+                            }
+                        }
+                    },
+                    emphasis: {
+                        areaStyle: {
+                            color: '#99d2dd'
+                        },
+                        label: {
+                            textStyle: {
+                                color: '#c12e34'
+                            }
+                        }
+                    }
+                }
+            },
+            force: {
+                itemStyle: {
+                    normal: {
+                        linkStyle: {
+                            strokeColor: '#408829'
+                        }
+                    }
+                }
+            },
+            chord: {
+                padding: 4,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 1,
+                            color: 'rgba(128, 128, 128, 0.5)'
+                        },
+                        chordStyle: {
+                            lineStyle: {
+                                width: 1,
+                                color: 'rgba(128, 128, 128, 0.5)'
+                            }
+                        }
+                    },
+                    emphasis: {
+                        lineStyle: {
+                            width: 1,
+                            color: 'rgba(128, 128, 128, 0.5)'
+                        },
+                        chordStyle: {
+                            lineStyle: {
+                                width: 1,
+                                color: 'rgba(128, 128, 128, 0.5)'
+                            }
+                        }
+                    }
+                }
+            },
+            gauge: {
+                startAngle: 225,
+                endAngle: -45,
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        color: [[0.2, '#86b379'], [0.8, '#68a54a'], [1, '#408829']],
+                        width: 8
+                    }
+                },
+                axisTick: {
+                    splitNumber: 10,
+                    length: 12,
+                    lineStyle: {
+                        color: 'auto'
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: 'auto'
+                    }
+                },
+                splitLine: {
+                    length: 18,
+                    lineStyle: {
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    length: '90%',
+                    color: 'auto'
+                },
+                title: {
+                    textStyle: {
+                        color: '#333'
+                    }
+                },
+                detail: {
+                    textStyle: {
+                        color: 'auto'
+                    }
+                }
+            },
+            textStyle: {
+                fontFamily: 'Arial, Verdana, sans-serif'
+            }
+        };
+        //echart Line     
+
+        var echartLine = echarts.init(document.getElementById('VentasEchart'), theme);
+
+        echartLine.setOption({
+            title: {
+                text: 'Line Graph',
+                subtext: 'Subtitle'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                x: 220,
+                y: 40,
+                data: ['Intent', 'Pre-order', 'Deal']
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    magicType: {
+                        show: true,
+                        title: {
+                            line: 'Line',
+                            bar: 'Bar',
+                            stack: 'Stack',
+                            tiled: 'Tiled'
+                        },
+                        type: ['line', 'bar', 'stack', 'tiled']
+                    },
+                    restore: {
+                        show: true,
+                        title: "Restore"
+                    },
+                    saveAsImage: {
+                        show: true,
+                        title: "Save Image"
+                    }
+                }
+            },
+            calculable: true,
+            xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+                }],
+            yAxis: [{
+                    type: 'value'
+                }],
+            series: [{
+                    name: 'Deal',
+                    type: 'line',
+                    smooth: true,
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
+                    data: [10, 12, 21, 54, 260, 830, 710, 100, 200, 300, 400, 500]
+                }, {
+                    name: 'Pre-order',
+                    type: 'line',
+                    smooth: true,
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
+                    data: [30, 182, 434, 791, 390, 30, 10, 500, 400, 300, 200, 100]
+                }, {
+                    name: 'Intent',
+                    type: 'line',
+                    smooth: true,
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
+                    data: [1320, 1132, 601, 234, 120, 90, 20, 100, 500, 200, 400, 300]
+                }]
+        });
+    }
+
+
+    $(document).ready(function () {
+        charts2();
+        morris2();
+        echarts2();
+    });
+</script>
+<!-- Chart.js -->
+<script src="/gimnasio/public/vendors/Chart.js/dist/Chart.min.js"></script>
+<!-- morris.js -->
+<script src="/gimnasio/public/vendors/raphael/raphael.min.js"></script>
+<script src="/gimnasio/public/vendors/morris.js/morris.min.js"></script>
+<!-- ECharts -->
+<script src="/gimnasio/public/vendors/echarts/dist/echarts.min.js"></script>
+<!-- jQuery Sparklines -->
+<script src="/gimnasio/public/vendors/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
+<!-- Flot -->
+<script src="/gimnasio/public/vendors/Flot/jquery.flot.js"></script>
+<script src="/gimnasio/public/vendors/Flot/jquery.flot.pie.js"></script>
+<script src="/gimnasio/public/vendors/Flot/jquery.flot.time.js"></script>
+<script src="/gimnasio/public/vendors/Flot/jquery.flot.stack.js"></script>
+<script src="/gimnasio/public/vendors/Flot/jquery.flot.resize.js"></script>
+<!-- Flot plugins -->
+<script src="/gimnasio/public/vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+<script src="/gimnasio/public/vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+<script src="/gimnasio/public/vendors/flot.curvedlines/curvedLines.js"></script>
+<!-- DateJS -->
+<script src="/gimnasio/public/vendors/DateJS/build/date.js"></script>
+<!-- bootstrap-daterangepicker -->
+<script src="/gimnasio/public/vendors/moment/min/moment.min.js"></script>
+<script src="/gimnasio/public/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
 

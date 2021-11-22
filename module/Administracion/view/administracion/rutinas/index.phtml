@@ -1,11 +1,12 @@
 <?php
 $title = 'Rutinass ';
 $this->headTitle($title);
-$this->headLink()->prependStylesheet($this->basePath('/public/css/dataTables.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/buttons.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/responsive.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/scroller.bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('/public/css/green.css'));
+$this->headLink()->prependStylesheet($this->basePath('vendors/datatables.net-bs/css/dataTables.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/iCheck/skins/flat/green.css'));
 
 $this->headScript()->prependScript('$(document).ready(function() {'
                 . '$("#tblRutinass").DataTable({'
@@ -34,14 +35,21 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                 . '});'
                 , 'text/javascript'
                 , array('noescape' => true))
-        ->prependFile('/gimnasio/public/js/sistema/rutinas.js')
-        ->prependFile('/gimnasio/public/js/datatables.scroller.min.js')
-        ->prependFile('/gimnasio/public/js/responsive.bootstrap.js')
-        ->prependFile('/gimnasio/public/js/dataTables.responsive.min.js')
-        ->prependFile('/gimnasio/public/js/buttons.bootstrap.min.js')
-        ->prependFile('/gimnasio/public/js/dataTables.buttons.min.js')
-        ->prependFile('/gimnasio/public/js/dataTables.bootstrap.min.js')
-        ->prependFile('/gimnasio/public/js/jquery.dataTables.min.js');
+        ->prependFile($this->basePath('js/sistema/rutinas.js'))
+        ->prependFile($this->basePath('vendors/iCheck/icheck.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-scroller/js/dataTables.scroller.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-responsive/js/dataTables.responsive.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/dataTables.buttons.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/buttons.html5.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-buttons/js/buttons.print.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js'))
+        ->prependFile($this->basePath('vendors/datatables.net-keytable/js/dataTables.keyTable.min.js'))
+        ->prependFile($this->basePath('vendors/pdfmake/build/pdfmake.min.js'))
+        ->prependFile($this->basePath('vendors/pdfmake/build/vfs_fonts.js'))
+        ->prependFile($this->basePath('vendors/datatables.net/js/jquery.dataTables.min.js'));
 ?>
 <div class="page-title">
     <div class="title_left">
@@ -81,7 +89,7 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                         <tr>
                             <th>ID</th>
                             <th>Usuario</th>
-                            <th>Instructor</th>
+                            <th>Identificacion</th>
                             <th>Descripcion</th>
                             <th>Fecha</th>
                             <th></th>
@@ -92,8 +100,8 @@ $this->headScript()->prependScript('$(document).ready(function() {'
                         foreach ($this->rutinass as $rutinas) {
                             echo '<tr>';
                             echo '<td>' . $rutinas['rutinasOBJ']->getPk_rutina_id() . '</td>';
-                            echo '<td>' . $rutinas['usuarioOBJ']->getNOM_USU() . ' ' . $rutinas['usuarioOBJ']->getAPELL_USU() . '</td>';
-                            echo '<td>' . $rutinas['instructorOBJ']->getNOM_INST() . ' ' . $rutinas['instructorOBJ']->getAPELL_INST() . '</td>';
+                            echo '<td>' . $rutinas['usuarioOBJ']->getNombreApellido() . '</td>';
+                            echo '<td>' . $rutinas['clienteempleadoOBJ']->getIdentificacion() . '</td>';
                             echo '<td>' . $rutinas['rutinasOBJ']->getDESCRIP_RUTINA() . '</td>';
                             echo '<td>' . $rutinas['rutinasOBJ']->getFechaRutina() . '</td>';
                             echo '<td>';

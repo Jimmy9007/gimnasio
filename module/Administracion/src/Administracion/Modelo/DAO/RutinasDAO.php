@@ -8,7 +8,7 @@ use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 use Administracion\Modelo\Entidades\Rutinas;
 use Administracion\Modelo\Entidades\Usuario;
-use Administracion\Modelo\Entidades\Instructor;
+use Administracion\Modelo\Entidades\Clienteempleado;
 use Administracion\Modelo\Entidades\Ejercicios;
 use Administracion\Modelo\Entidades\RutinasEjercicios;
 
@@ -25,23 +25,21 @@ class RutinasDAO extends AbstractTableGateway {
         $select = new Select($this->table);
         $select->columns(array(
             'pk_rutina_id',
-            'fk_instructor_id',
             'fk_usuario_id',
             'DESCRIP_RUTINA',
             'fechaRutina',
         ));
         $select->join('usuario', 'usuario.pk_usuario_id = rutinas.fk_usuario_id', array(
             'pk_usuario_id',
-            'NOM_USU',
-            'APELL_USU',
-            'SEXO',
-            'FECHA_NAC_USU',
+            'fk_clienteempleado_id',
+            'nombreApellido',
+            'genero',
         ));
-        $select->join('instructor', 'instructor.pk_instructor_id = rutinas.fk_instructor_id', array(
-            'pk_instructor_id',
-            'NOM_INST',
-            'APELL_INST',
-            'SEXO_INST',
+        $select->join('clienteempleado', 'clienteempleado.pk_clienteempleado_id = usuario.fk_clienteempleado_id', array(
+            'pk_clienteempleado_id',
+            'identificacion',
+            'nombre',
+            'apellido',
         ));
         if ($filtro != '') {
             $select->where($filtro);
@@ -51,7 +49,7 @@ class RutinasDAO extends AbstractTableGateway {
         foreach ($datos as $dato) {
             $rutinaUsuario = array(
                 'usuarioOBJ' => new Usuario($dato),
-                'instructorOBJ' => new Instructor($dato),
+                'clienteempleadoOBJ' => new Clienteempleado($dato),
                 'rutinasOBJ' => new Rutinas($dato),
             );
             $rutinass[] = $rutinaUsuario;
@@ -64,23 +62,14 @@ class RutinasDAO extends AbstractTableGateway {
         $select = new Select($this->table);
         $select->columns(array(
             'pk_rutina_id',
-            'fk_instructor_id',
             'fk_usuario_id',
             'DESCRIP_RUTINA',
             'fechaRutina',
         ));
         $select->join('usuario', 'usuario.pk_usuario_id = rutinas.fk_usuario_id', array(
             'pk_usuario_id',
-            'NOM_USU',
-            'APELL_USU',
-            'SEXO',
-            'FECHA_NAC_USU',
-        ));
-        $select->join('instructor', 'instructor.pk_instructor_id = rutinas.fk_instructor_id', array(
-            'pk_instructor_id',
-            'NOM_INST',
-            'APELL_INST',
-            'SEXO_INST',
+            'nombreApellido',
+            'genero',
         ))->where(array('pk_usuario_id' => $filtro));
         if ($filtro != '') {
             $select->where($filtro);
@@ -90,7 +79,6 @@ class RutinasDAO extends AbstractTableGateway {
         foreach ($datos as $dato) {
             $rutinaUsuario = array(
                 'usuarioOBJ' => new Usuario($dato),
-                'instructorOBJ' => new Instructor($dato),
                 'rutinasOBJ' => new Rutinas($dato),
             );
             $rutinass[] = $rutinaUsuario;

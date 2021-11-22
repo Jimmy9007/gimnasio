@@ -15,7 +15,6 @@ echo $this->form()->openTag($form);
     <table id="tblUsuarios" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>IDENTIFICACION</th>
                 <th>NOMBRES</th>
                 <th></th>
@@ -25,9 +24,8 @@ echo $this->form()->openTag($form);
             <?php
             foreach ($this->usuarios as $usuarios) {
                 echo '<tr>';
-                echo '<td>' . $usuarios['usuarioOBJ']->getPk_usuario_id() . '</td>';
-                echo '<td>' . $usuarios['usuarioOBJ']->getIDENTIFICACION() . '</td>';
-                echo '<td>' . $usuarios['usuarioOBJ']->getNOM_USU() . ' ' . $usuarios['usuarioOBJ']->getAPELL_USU() . '</td>';
+                echo '<td>' . $usuarios['clienteempleadoOBJ']->getIdentificacion() . '</td>';
+                echo '<td>' . $usuarios['usuarioOBJ']->getNombreApellido() . '</td>';
                 echo '<td>';
                 echo '<button type = "submit" onclick = "selectUsuario(' . $usuarios['usuarioOBJ']->getPk_usuario_id() . ');" class = "btn btn-success">OK</button>';
                 echo '</td>';

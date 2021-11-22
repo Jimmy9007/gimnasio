@@ -57,9 +57,17 @@ class Module {
         $header->setTemplate('layout/header');
         $layout->addChild($header, 'header');
 
+        $header2 = new ViewModel();
+        $header2->setTemplate('layout/navlogin/header2');
+        $layout->addChild($header2, 'header2');
+
         $footer = new ViewModel();
         $footer->setTemplate('layout/footer');
         $layout->addChild($footer, 'footer');
+
+        $footer2 = new ViewModel();
+        $footer2->setTemplate('layout/navlogin/footer2');
+        $layout->addChild($footer2, 'footer2');
 
         $headerlogin = new ViewModel();
         $headerlogin->setTemplate('layout/headerlogin');
@@ -72,11 +80,14 @@ class Module {
         $menuAdmin = new ViewModel();
         $menuAdmin->setTemplate('layout/menuadmin');
         $layout->addChild($menuAdmin, 'menuadmin');
-        
-        $menuAsistencia = new ViewModel();
-        $menuAsistencia->setTemplate('layout/menuasistencia');
-        $layout->addChild($menuAsistencia, 'menuasistencia');
 
+        $menuInstructor = new ViewModel();
+        $menuInstructor->setTemplate('layout/menuinstructor');
+        $layout->addChild($menuInstructor, 'menuinstructor');
+
+        $menuEmpleado = new ViewModel();
+        $menuEmpleado->setTemplate('layout/menuempleado');
+        $layout->addChild($menuEmpleado, 'menuempleado');
 
         $global = new ViewModel();
         $global->setTemplate('layout/global');
